@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0a0a0a; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: rgba(243,225,204,0.18); border-radius: 2px; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes bgDrift { 0% { transform:scale(0.5) translate(0,0); } 50% { transform:scale(0.56) translate(-1.5%,-1%); } 100% { transform:scale(0.5) translate(0,0); } }
+    @keyframes wordUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0%); opacity:1; } }
+    @keyframes charLoop { 0% { transform:translateY(100%); } 8% { transform:translateY(0%); } 88% { transform:translateY(0%); } 100% { transform:translateY(-100%); } }
+    @keyframes logoCharIn {
+      0% { transform:translateY(0) rotate(-360deg); }
+      30% { transform:translateY(-12px) rotate(-180deg); }
+      50% { transform:translateY(-12px) rotate(-60deg); }
+      65% { transform:translateY(4px) rotate(-8deg); }
+      80% { transform:translateY(-2px) rotate(0deg); }
+      92% { transform:translateY(1px) rotate(0deg); }
+      100% { transform:translateY(0) rotate(0deg); }
+    }
+    @keyframes logoCharInAlt {
+      0% { transform:translateY(0) rotate(-360deg); }
+      30% { transform:translateY(-12px) rotate(-180deg); }
+      50% { transform:translateY(-12px) rotate(-60deg); }
+      65% { transform:translateY(4px) rotate(-8deg); }
+      80% { transform:translateY(-2px) rotate(0deg); }
+      92% { transform:translateY(1px) rotate(0deg); }
+      100% { transform:translateY(0) rotate(0deg); }
+    }
+    @keyframes wipeReveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0% 0 0); } }
+    .shelf-range { -webkit-appearance:none; appearance:none; width:100%; height:16px; background:transparent; cursor:pointer; margin:0; }
+  </style>
+  <style>
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#0a0a0a; font-family:'Space Grotesk',system-ui,sans-serif; color:#f3e1cc;">
+
+  <!-- ── Top Nav ── -->
+  <header style="position:fixed; top:0; left:0; right:0; height:56px; background:#0d0f0c; border-bottom:1px solid rgba(247,243,234,0.08); z-index:100; display:flex; align-items:stretch; padding:0 48px;">
+    <div onClick="{{ goLanding }}" style="display:flex; align-items:center; margin-right:48px; flex-shrink:0; cursor:pointer;">
+      <span style="font-size:20px; font-weight:800; letter-spacing:-0.5px; color:#f7f3ea;">
+        <sc-for list="{{ logoChars }}" as="c" hint-placeholder-count="5">
+          <span style="{{ c.style }}">{{ c.ch }}</span>
+        </sc-for>
+      </span>
+    </div>
+    <nav style="display:flex; align-items:stretch; gap:2px; flex:1;">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="4">
+        <div style="{{ item.style }}" onClick="{{ item.onClick }}">
+          <span>
+            <sc-for list="{{ item.labelChars }}" as="lc" hint-placeholder-count="8">
+              <span style="{{ lc.style }}">{{ lc.ch }}</span>
+            </sc-for>
+          </span>
+          <sc-if value="{{ item.count }}" hint-placeholder-val="{{ false }}">
+            <span style="background:#FBD509; color:#0a0a0a; font-size:9px; font-weight:700; padding:1px 6px; border-radius:8px; margin-left:5px; line-height:1.4;">{{ item.count }}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="display:flex; align-items:center; gap:16px; flex-shrink:0;">
+      <div onClick="{{ openAddBook }}" style="display:flex; align-items:center; gap:6px; background:transparent; border:1px solid rgba(251,213,9,0.45); color:#FBD509; font-size:11px; font-weight:700; padding:7px 14px; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; user-select:none; transition:background 0.2s ease, border-color 0.2s ease;" style-hover="background:rgba(143,187,26,0.1); border-color:rgba(143,187,26,0.6);">+ Add Book</div>
+      <div style="text-align:right;">
+        <div style="font-size:12px; font-weight:600; color:#f7f3ea; line-height:1.2;">Maren Cole</div>
+        <div style="font-size:10px; color:rgba(247,243,234,0.45);">@marencole</div>
+      </div>
+      <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#2b2b2b,#0c0c0c); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#f7f3ea; flex-shrink:0;">MC</div>
+    </div>
+  </header>
+
+  <!-- ── Main Content ── -->
+  <main style="min-height:100vh; padding-top:56px;">
+
+    <!-- ════════════ LANDING ════════════ -->
+    <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ false }}">
+      <div ref="{{ heroSectionRef }}" style="position:relative; height:220vh;">
+        <div style="position:sticky; top:0; height:calc(100vh - 56px); overflow:hidden; display:flex; align-items:center; background:#FBD509;" onPointerMove="{{ onHeroPointerMove }}">
+          <div ref="{{ heroMediaRef }}" style="position:absolute; inset:0; top:0; overflow:hidden; will-change:transform; -webkit-mask-image:linear-gradient(to bottom, black 60%, transparent 100%); mask-image:linear-gradient(to bottom, black 60%, transparent 100%);">
+            <div style="position:absolute; inset:-15%;">
+              <div style="position:absolute; width:520px; height:420px; border-radius:50%; filter:blur(70px); opacity:0.9; background:#5BD98B; top:5%; left:0%;"></div>
+              <div style="position:absolute; width:560px; height:460px; border-radius:50%; filter:blur(70px); opacity:0.9; background:#7C7FE0; top:15%; left:32%;"></div>
+              <div style="position:absolute; width:520px; height:440px; border-radius:50%; filter:blur(70px); opacity:0.9; background:#E67BC7; top:8%; left:62%;"></div>
+              <div style="position:absolute; width:480px; height:420px; border-radius:50%; filter:blur(70px); opacity:0.9; background:#FF5A3F; top:12%; left:85%;"></div>
+            </div>
+          </div>
+          <div ref="{{ spotlightRef }}" style="position:absolute; left:0; top:0; width:420px; height:420px; border-radius:50%; pointer-events:none; background:radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, transparent 70%); mix-blend-mode:overlay; z-index:3; will-change:transform;"></div>
+          <div ref="{{ heroContentRef }}" style="position:relative; z-index:5; padding:0 64px; max-width:640px; will-change:transform,opacity;">
+            <div style="font-family:'Courier New',monospace; font-size:11px; letter-spacing:0.08em; color:rgba(10,8,6,0.6); text-transform:uppercase; margin-bottom:18px;">A reading log, not a feed</div>
+            <div style="font-family:'DM Serif Display',Georgia,serif; font-size:56px; font-weight:400; line-height:1.05; color:#0A0806; margin-bottom:20px; text-wrap:pretty;">
+              <sc-for list="{{ headlineWords }}" as="w" hint-placeholder-count="7">
+                <span style="{{ w.outerStyle }}"><span style="{{ w.innerStyle }}">{{ w.text }}</span></span>
+              </sc-for>
+            </div>
+            <div style="font-size:15px; color:rgba(10,8,6,0.68); line-height:1.7; margin-bottom:34px; max-width:460px; text-wrap:pretty;">Track what you read. Send a book to a friend with a note attached. When they finish it, you get their honest take back — no algorithm in between.</div>
+            <div onClick="{{ enterShelf }}" style="display:inline-flex; align-items:center; gap:8px; background:#0A0806; color:#FBD509; font-size:13px; font-weight:700; letter-spacing:0.07em; padding:14px 30px; border-radius:3px; cursor:pointer; user-select:none; text-transform:uppercase; transition:transform 0.2s ease;" style-hover="transform:translateY(-2px);">
+              <sc-for list="{{ enterShelfChars }}" as="c" hint-placeholder-count="19">
+                <span style="{{ c.outerStyle }}"><span style="{{ c.innerStyle }}">{{ c.ch }}</span></span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#0a0a0a; padding:80px 52px 100px; position:relative; z-index:3;">
+        <div style="font-size:11px; color:rgba(255,255,255,0.5); letter-spacing:0.25em; text-transform:uppercase; margin-bottom:14px;">Trending this week</div>
+        <div style="font-family:'DM Serif Display',Georgia,serif; font-size:34px; color:#f3e1cc; margin-bottom:36px; max-width:520px; text-wrap:pretty;">What everyone's adding to their shelf</div>
+        <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:22px;">
+          <sc-for list="{{ trendingBooks }}" as="book" hint-placeholder-count="6">
+            <div onClick="{{ enterShelf }}" style="cursor:pointer;">
+              <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:3px; border:1px solid rgba(243,225,204,0.1);">
+                <div style="{{ book.bgStyle }}"></div>
+                <div style="{{ book.spineStyle }}"></div>
+                <div style="position:absolute; bottom:0; left:0; right:0; padding:10px; background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:12px; color:#f3e1cc; line-height:1.3;">{{ book.title }}</div>
+                </div>
+              </div>
+              <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.55);">{{ book.author }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ════════════ AUTH ════════════ -->
+    <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative; min-height:calc(100vh - 56px); display:flex; align-items:center; justify-content:center; overflow:hidden; padding:40px 20px;">
+        <img src="./assets/landing-hero-3.png" alt="" style="position:absolute; inset:-60%; width:220%; height:220%; object-fit:cover; filter:blur(16px); animation:bgDrift 26s ease-in-out infinite;">
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,8,0.55) 0%, rgba(8,8,6,0.82) 100%);"></div>
+        <div style="position:relative; z-index:1; width:400px; max-width:100%; background:rgba(13,15,12,0.82); border:1px solid rgba(247,243,234,0.1); border-radius:8px; padding:40px 36px; animation:fadeUp 0.3s cubic-bezier(0.16,1,0.3,1) both;">
+          <div style="font-size:20px; font-weight:800; letter-spacing:-0.5px; color:#f7f3ea; text-align:center; margin-bottom:24px;">SHELF</div>
+          <div style="display:flex; gap:24px; justify-content:center; border-bottom:1px solid rgba(247,243,234,0.1); margin-bottom:26px;">
+            <div style="{{ authTabSigninStyle }}" onClick="{{ setAuthSignin }}">Sign In</div>
+            <div style="{{ authTabSignupStyle }}" onClick="{{ setAuthSignup }}">Sign Up</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <sc-if value="{{ isAuthSignup }}" hint-placeholder-val="{{ false }}">
+              <input value="{{ authName }}" onChange="{{ setAuthName }}" placeholder="Name" style="{{ authInputStyle }}">
+            </sc-if>
+            <input value="{{ authEmail }}" onChange="{{ setAuthEmail }}" placeholder="Email" style="{{ authInputStyle }}">
+            <input type="password" value="{{ authPassword }}" onChange="{{ setAuthPassword }}" placeholder="Password" style="{{ authInputStyle }}">
+            <div onClick="{{ enterApp }}" style="background:#FBD509; color:#0d0f0c; font-size:12px; font-weight:700; padding:13px; text-align:center; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; user-select:none; margin-top:4px; transition:transform 0.2s ease;" style-hover="transform:translateY(-2px);">{{ authSubmitLabel }}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin:24px 0;">
+            <div style="flex:1; height:1px; background:rgba(247,243,234,0.1);"></div>
+            <div style="font-size:10px; color:rgba(247,243,234,0.4); letter-spacing:0.08em; text-transform:uppercase;">or continue with</div>
+            <div style="flex:1; height:1px; background:rgba(247,243,234,0.1);"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="border:1px solid rgba(247,243,234,0.18); color:rgba(247,243,234,0.85); font-size:12px; font-weight:500; padding:11px; text-align:center; border-radius:3px; cursor:pointer; user-select:none; transition:background 0.2s ease;" style-hover="background:rgba(247,243,234,0.06);">Continue with Google</div>
+            <div style="border:1px solid rgba(247,243,234,0.18); color:rgba(247,243,234,0.85); font-size:12px; font-weight:500; padding:11px; text-align:center; border-radius:3px; cursor:pointer; user-select:none; transition:background 0.2s ease;" style-hover="background:rgba(247,243,234,0.06);">Continue with Apple</div>
+          </div>
+          <div style="text-align:center; margin-top:24px; font-size:12px; color:rgba(247,243,234,0.5);">{{ authSwitchPrompt }} <span onClick="{{ authSwitchAction }}" style="color:#FBD509; cursor:pointer; font-weight:600;">{{ authSwitchLabel }}</span></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ════════════ SHELF ════════════ -->
+    <sc-if value="{{ isShelf }}" hint-placeholder-val="{{ true }}">
+
+      <!-- Profile Hero -->
+      <div style="position:relative; overflow:hidden; padding:52px 52px 0; animation:fadeIn 0.35s ease;">
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,10,0.55) 0%, #0a0a0a 75%);"></div>
+        <div style="position:absolute; inset:0; background:radial-gradient(ellipse 55% 45% at 50% 110%, rgba(10,10,10,0.4), transparent);"></div>
+        <div style="position:relative; z-index:1; display:flex; align-items:flex-end; gap:26px; padding-bottom:34px;">
+          <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#2b2b2b,#0c0c0c); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:#f7f3ea; border:2px solid rgba(243,225,204,0.22); flex-shrink:0;">MC</div>
+          <div style="flex:1;">
+            <div style="font-family:'DM Serif Display',Georgia,serif; font-size:40px; color:#f3e1cc; line-height:1; margin-bottom:5px;">Maren Cole</div>
+            <div style="color:#FBD509; font-size:13px; margin-bottom:14px;">@marencole</div>
+            <div style="display:flex; gap:28px;">
+              <div style="font-size:13px;"><span style="font-weight:700; color:#f3e1cc;">{{ readCount }}</span> <span style="color:rgba(255,255,255,0.55);">read</span></div>
+              <div style="font-size:13px;"><span style="font-weight:700; color:#f3e1cc;">3</span> <span style="color:rgba(255,255,255,0.55);">friends</span></div>
+              <div style="font-size:13px;"><span style="font-weight:700; color:#f3e1cc;">{{ wantCount }}</span> <span style="color:rgba(255,255,255,0.55);">want to read</span></div>
+            </div>
+          </div>
+          <div onClick="{{ openRec }}" style="background:#f3e1cc; color:#0a0a0a; font-size:12px; font-weight:700; padding:10px 22px; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; user-select:none; flex-shrink:0; transition:transform 0.2s ease, background 0.2s ease;" style-hover="transform:translateY(-2px); background:#2a251c;">Send a Rec →</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="padding:0 52px; border-bottom:1px solid rgba(243,225,204,0.07); display:flex; align-items:center; justify-content:space-between; gap:32px;">
+        <div style="display:flex; gap:32px;">
+          <div style="{{ tsRead }}" onClick="{{ setTabRead }}">Read <span style="font-size:10px; color:rgba(255,255,255,0.55); margin-left:5px;">{{ readCount }}</span></div>
+          <div style="{{ tsReading }}" onClick="{{ setTabReading }}">Reading <span style="font-size:10px; color:rgba(255,255,255,0.55); margin-left:5px;">{{ readingCount }}</span></div>
+          <div style="{{ tsWant }}" onClick="{{ setTabWant }}">Want to Read <span style="font-size:10px; color:rgba(255,255,255,0.55); margin-left:5px;">{{ wantCount }}</span></div>
+        </div>
+        <div style="position:relative;">
+          <div onClick="{{ toggleSortDropdown }}" style="display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600; letter-spacing:0.05em; color:rgba(255,255,255,0.75); cursor:pointer; user-select:none; padding:10px 4px;">
+            <span>Sort: {{ sortLabel }}</span>
+            <span style="font-size:9px; color:rgba(255,255,255,0.5);">{{ sortCaret }}</span>
+          </div>
+          <sc-if value="{{ sortDropdownOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute; top:100%; right:0; margin-top:4px; background:#141414; border:1px solid rgba(243,225,204,0.12); border-radius:5px; overflow:hidden; z-index:10; min-width:170px; animation:fadeIn 0.15s ease;">
+              <sc-for list="{{ sortOptions }}" as="opt" hint-placeholder-count="3">
+                <div style="{{ opt.style }}" onClick="{{ opt.onClick }}">{{ opt.label }}</div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- Book Grid -->
+      <div style="padding:36px 52px; display:grid; grid-template-columns:repeat(4,1fr); gap:26px;">
+        <sc-for list="{{ shelfBooks }}" as="book" hint-placeholder-count="8">
+          <div onClick="{{ book.onClick }}" style="cursor:pointer; animation:fadeUp 0.35s ease both; transition:transform 0.25s ease;" style-hover="transform:translateY(-4px);">
+            <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:3px; border:1px solid rgba(243,225,204,0.06); transition:box-shadow 0.25s ease;" style-hover="box-shadow:0 12px 24px rgba(243,225,204,0.18);">
+              <div style="{{ book.bgStyle }}"></div>
+              <div style="{{ book.spineStyle }}"></div>
+              <div style="position:absolute; bottom:0; left:0; right:0; padding:12px; background:linear-gradient(to top,rgba(0,0,0,0.93),transparent);">
+                <div style="font-family:'DM Serif Display',Georgia,serif; font-size:13px; color:#f3e1cc; line-height:1.3; text-shadow:0 1px 4px rgba(0,0,0,0.8);">{{ book.title }}</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-bottom:4px;">{{ book.author }}</div>
+              <sc-if value="{{ book.stars }}" hint-placeholder-val="{{ false }}">
+                <div style="color:#f3e1cc; font-size:11px; letter-spacing:1.5px; margin-bottom:5px;">{{ book.stars }}</div>
+              </sc-if>
+              <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:5px;">
+                <sc-for list="{{ book.genres }}" as="genre" hint-placeholder-count="1">
+                  <span style="font-size:10px; color:#f3e1cc; background:rgba(243,225,204,0.06); padding:2px 7px; border-radius:2px; letter-spacing:0.03em;">{{ genre }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+    </sc-if>
+
+    <!-- ════════════ BOOK DETAIL ════════════ -->
+    <sc-if value="{{ isBook }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ curBook }}" hint-placeholder-val="{{ true }}">
+
+        <div style="padding:34px 52px; display:flex; flex-direction:column; align-items:flex-start; gap:28px; max-width:640px; margin:0 auto; transform:translateX(-90px);">
+          <!-- Cover + Title row -->
+          <div style="display:flex; gap:32px; align-items:flex-start; width:100%;">
+            <div style="width:220px; flex-shrink:0;">
+              <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:4px; border:1px solid rgba(243,225,204,0.09);">
+                <div style="{{ curBook.bgStyle }}"></div>
+                <div style="{{ curBook.spineLgStyle }}"></div>
+                <div style="position:absolute; bottom:0; left:0; right:0; padding:16px; background:linear-gradient(to top,rgba(0,0,0,0.94),transparent);">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:15px; color:#f3e1cc; line-height:1.3;">{{ curBook.title }}</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:22px; padding-top:4px;">
+              <div style="text-align:left;">
+                <div style="font-family:'DM Serif Display',Georgia,serif; font-size:44px; color:#f3e1cc; line-height:1.02; margin-bottom:8px;">{{ curBook.title }}</div>
+                <div style="color:rgba(243,225,204,0.7); font-size:17px; margin-bottom:5px;">{{ curBook.author }}</div>
+                <div style="color:rgba(255,255,255,0.55); font-size:12px; letter-spacing:0.06em; text-transform:uppercase;">{{ curBook.year }} · {{ curBook.pages }} pages</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px; width:220px;">
+                <div onClick="{{ openRecBook }}" style="background:#f3e1cc; color:#0a0a0a; font-size:11px; font-weight:700; padding:11px; text-align:center; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; user-select:none;">Send to a Friend →</div>
+                <div style="border:1px solid rgba(243,225,204,0.1); color:rgba(243,225,204,0.55); font-size:11px; font-weight:500; padding:10px; text-align:center; border-radius:3px; cursor:pointer; user-select:none;">Mark as Want to Read</div>
+              </div>
+            </div>
+          </div>
+          <!-- Info -->
+          <div style="width:100%; text-align:left;">
+            <div style="display:flex; flex-wrap:wrap; gap:7px; margin-bottom:26px;">
+              <sc-for list="{{ curBook.genres }}" as="genre" hint-placeholder-count="2">
+                <span style="font-size:12px; color:#f3e1cc; background:rgba(243,225,204,0.06); padding:4px 13px; border-radius:2px; letter-spacing:0.05em; border:1px solid rgba(243,225,204,0.14);">{{ genre }}</span>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:6px; margin-bottom:26px;">
+              <sc-for list="{{ curBookStars }}" as="star" hint-placeholder-count="5">
+                <span onClick="{{ star.onClick }}" style="{{ star.style }}" style-hover="transform:scale(1.15);">★</span>
+              </sc-for>
+            </div>
+            <div style="font-size:15px; color:rgba(243,225,204,0.7); line-height:1.78; margin-bottom:30px; text-align:left; text-wrap:pretty;">{{ curBook.synopsis }}</div>
+            <sc-if value="{{ curBook.myNote }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#141414; border:1px solid rgba(243,225,204,0.08); border-radius:4px; padding:22px; margin-bottom:26px; text-align:left;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:12px;">My Notes</div>
+                <div style="font-style:italic; color:#f3e1cc; font-size:14px; line-height:1.78;">{{ curBook.myNote }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ curBook.hasTakes }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:left;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:14px;">Friends' Takes</div>
+                <sc-for list="{{ curBook.friendTakes }}" as="take" hint-placeholder-count="1">
+                  <div style="background:#141414; border:1px solid rgba(243,225,204,0.07); border-radius:4px; padding:16px; margin-bottom:8px; display:flex; align-items:flex-start; gap:12px;">
+                    <div style="width:32px; height:32px; border-radius:50%; background:#242424; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#FBD509; flex-shrink:0;">{{ take.initials }}</div>
+                    <div>
+                      <div style="color:#FBD509; font-size:13px; font-weight:500; margin-bottom:5px;">{{ take.name }} <span style="color:#f3e1cc; font-size:12px; margin-left:8px; letter-spacing:1px;">{{ take.stars }}</span></div>
+                      <div style="color:rgba(243,225,204,0.7); font-size:14px; line-height:1.65; font-style:italic;">{{ take.note }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ════════════ INBOX ════════════ -->
+    <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:52px; max-width:860px; animation:fadeIn 0.35s ease;">
+        <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:8px;">
+          <div style="font-family:'DM Serif Display',Georgia,serif; font-size:40px; color:#f3e1cc;">Inbox</div>
+          <sc-if value="{{ unreadCount }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FBD509; color:#0a0a0a; font-size:11px; font-weight:700; padding:3px 12px; border-radius:10px;">{{ unreadCount }} new</div>
+          </sc-if>
+        </div>
+        <div style="color:rgba(255,255,255,0.55); font-size:14px; margin-bottom:40px;">Books your friends thought you'd love — with a personal note, not an algorithm.</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ inboxItems }}" as="item" hint-placeholder-count="3">
+            <div onClick="{{ item.onToggle }}" style="background:#141414; border:1px solid rgba(243,225,204,0.08); border-radius:6px; cursor:pointer; overflow:hidden; transition:border-color 0.2s;" style-hover="border-color:rgba(243,225,204,0.16);">
+              <!-- Collapsed row -->
+              <div style="display:flex; align-items:center; gap:16px; padding:18px 22px;">
+                <div style="{{ item.avatarStyle }}">{{ item.senderAvatar }}</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                    <span style="color:#FBD509; font-size:13px; font-weight:600;">{{ item.senderName }}</span>
+                    <span style="color:rgba(255,255,255,0.55); font-size:12px;">recommended</span>
+                    <sc-if value="{{ item.isUnread }}" hint-placeholder-val="{{ false }}">
+                      <span style="width:6px; height:6px; border-radius:50%; background:#FBD509; display:inline-block; flex-shrink:0;"></span>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="{{ item.miniCoverStyle }}"></div>
+                    <div>
+                      <div style="font-family:'DM Serif Display',Georgia,serif; font-size:17px; color:#f3e1cc; line-height:1.2;">{{ item.bookTitle }}</div>
+                      <div style="color:rgba(255,255,255,0.55); font-size:11px; margin-top:2px;">{{ item.bookAuthor }} · {{ item.year }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:14px; flex-shrink:0;">
+                  <sc-if value="{{ item.isAdded }}" hint-placeholder-val="{{ false }}">
+                    <span style="color:#f3e1cc; font-size:11px; font-weight:600; letter-spacing:0.06em;">ADDED ✓</span>
+                  </sc-if>
+                  <span style="color:rgba(255,255,255,0.55); font-size:11px;">{{ item.dateSent }}</span>
+                  <span style="color:rgba(255,255,255,0.55); font-size:13px;">{{ item.expandIcon }}</span>
+                </div>
+              </div>
+              <!-- Expanded -->
+              <sc-if value="{{ item.isExpanded }}" hint-placeholder-val="{{ false }}">
+                <div style="border-top:1px solid rgba(243,225,204,0.07); padding:20px 22px 24px; animation:fadeIn 0.2s ease;">
+                  <div style="display:flex; gap:6px; margin-bottom:18px;">
+                    <sc-for list="{{ item.genres }}" as="genre" hint-placeholder-count="2">
+                      <span style="font-size:10px; color:#f3e1cc; background:rgba(243,225,204,0.06); padding:2px 9px; border-radius:2px; letter-spacing:0.05em;">{{ genre }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="font-style:italic; color:rgba(243,225,204,0.88); font-size:15px; line-height:1.82; margin-bottom:24px; padding-left:18px; border-left:2px solid rgba(243,225,204,0.35); text-wrap:pretty;">"{{ item.note }}"</div>
+                  <div style="display:flex; gap:10px;">
+                    <sc-if value="{{ item.isAdded }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid rgba(243,225,204,0.3); color:#f3e1cc; font-size:12px; font-weight:600; padding:9px 18px; border-radius:3px; user-select:none;">Added to shelf ✓</div>
+                    </sc-if>
+                    <sc-if value="{{ item.isNotAdded }}" hint-placeholder-val="{{ true }}">
+                      <div onClick="{{ item.onAdd }}" style="background:#f3e1cc; color:#0a0a0a; font-size:12px; font-weight:700; padding:9px 18px; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; user-select:none;">+ Add to Shelf</div>
+                    </sc-if>
+                    <div onClick="{{ item.onDismiss }}" style="border:1px solid rgba(243,225,204,0.1); color:rgba(243,225,204,0.4); font-size:12px; font-weight:500; padding:9px 18px; border-radius:3px; cursor:pointer; user-select:none;">Dismiss</div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ════════════ FRIENDS ════════════ -->
+    <sc-if value="{{ isFriend }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid; grid-template-columns:210px 1fr; min-height:100vh; animation:fadeIn 0.35s ease;">
+        <!-- Friend list -->
+        <div style="border-right:1px solid rgba(243,225,204,0.07); padding:28px 14px;">
+          <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:14px; padding:0 12px;">Your Friends</div>
+          <sc-for list="{{ allFriends }}" as="friend" hint-placeholder-count="3">
+            <div style="{{ friend.cardStyle }}" onClick="{{ friend.onClick }}">
+              <div style="{{ friend.avatarStyle }}">{{ friend.avatar }}</div>
+              <div>
+                <div style="font-size:13px; color:#f3e1cc; font-weight:500; line-height:1.2;">{{ friend.name }}</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.55); margin-top:1px;">{{ friend.booksRead }} read</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <!-- Friend detail -->
+        <div style="padding:44px 52px;">
+          <div style="display:flex; align-items:flex-start; gap:22px; margin-bottom:44px;">
+            <div style="{{ curFriendAvatarStyle }}">{{ curFriend.avatar }}</div>
+            <div style="flex:1;">
+              <div style="font-family:'DM Serif Display',Georgia,serif; font-size:36px; color:#f3e1cc; line-height:1; margin-bottom:5px;">{{ curFriend.name }}</div>
+              <div style="color:#FBD509; font-size:13px; margin-bottom:10px;">{{ curFriend.handle }}</div>
+              <div style="color:rgba(243,225,204,0.6); font-size:14px; line-height:1.65; max-width:460px; margin-bottom:14px; text-wrap:pretty;">{{ curFriend.bio }}</div>
+              <div style="display:flex; gap:24px;">
+                <div style="font-size:13px;"><span style="font-weight:700; color:#f3e1cc;">{{ curFriend.booksRead }}</span> <span style="color:rgba(255,255,255,0.55);">read</span></div>
+                <div style="font-size:13px;"><span style="font-weight:700; color:#f3e1cc;">{{ curFriend.sharedBooks }}</span> <span style="color:rgba(255,255,255,0.55);">in common</span></div>
+              </div>
+            </div>
+            <div onClick="{{ openRecFriend }}" style="background:#f3e1cc; color:#0a0a0a; font-size:12px; font-weight:700; padding:10px 20px; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; flex-shrink:0; user-select:none;">Send a Rec →</div>
+          </div>
+          <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:18px;">Recent Reads</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:22px; max-width:560px;">
+            <sc-for list="{{ friendBooks }}" as="book" hint-placeholder-count="3">
+              <div onClick="{{ book.onClick }}" style="cursor:pointer;">
+                <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:3px; border:1px solid rgba(243,225,204,0.06);">
+                  <div style="{{ book.bgStyle }}"></div>
+                  <div style="{{ book.spineStyle }}"></div>
+                  <div style="position:absolute; bottom:0; left:0; right:0; padding:10px; background:linear-gradient(to top,rgba(0,0,0,0.92),transparent);">
+                    <div style="font-family:'DM Serif Display',Georgia,serif; font-size:12px; color:#f3e1cc; line-height:1.3;">{{ book.title }}</div>
+                  </div>
+                </div>
+                <div style="margin-top:8px;">
+                  <div style="font-size:11px; color:rgba(255,255,255,0.55);">{{ book.author }}</div>
+                  <sc-if value="{{ book.stars }}" hint-placeholder-val="{{ false }}">
+                    <div style="color:#f3e1cc; font-size:11px; letter-spacing:1.5px; margin-top:3px;">{{ book.stars }}</div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ════════════ ADD BOOK ════════════ -->
+    <sc-if value="{{ isAddBook }}" hint-placeholder-val="{{ false }}">
+      <div style="min-height:calc(100vh - 56px);">
+      <div style="padding:44px 52px; max-width:900px;">
+        <div style="font-family:'DM Serif Display',Georgia,serif; font-size:36px; color:#f3e1cc; margin-bottom:6px;">Add a Book</div>
+        <div style="color:rgba(255,255,255,0.55); font-size:14px; margin-bottom:28px;">Search the catalog, or enter one yourself and design its cover.</div>
+
+        <div style="display:flex; gap:28px; border-bottom:1px solid rgba(243,225,204,0.07); margin-bottom:28px;">
+          <div style="{{ abModeSearchStyle }}" onClick="{{ setModeSearch }}">Search Catalog</div>
+          <div style="{{ abModeManualStyle }}" onClick="{{ setModeManual }}">Manual Entry</div>
+        </div>
+
+        <!-- Search mode -->
+        <sc-if value="{{ isAbSearch }}" hint-placeholder-val="{{ true }}">
+          <input value="{{ abQuery }}" onChange="{{ setAbQuery }}" placeholder="Search by title or author…" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:4px; padding:13px 16px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; outline:none; margin-bottom:22px;">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ abResults }}" as="book" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:16px; background:#141414; border:1px solid rgba(243,225,204,0.08); border-radius:5px; padding:14px 18px;">
+                <div style="{{ book.miniStyle }}"></div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:16px; color:#f3e1cc; line-height:1.2;">{{ book.title }}</div>
+                  <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:3px;">{{ book.author }} · {{ book.year }}</div>
+                </div>
+                <sc-if value="{{ book.isAdded }}" hint-placeholder-val="{{ false }}">
+                  <span style="color:#f3e1cc; font-size:11px; font-weight:600; letter-spacing:0.06em;">ADDED ✓</span>
+                </sc-if>
+                <sc-if value="{{ book.isNotAdded }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ book.onAdd }}" style="border:1px solid rgba(243,225,204,0.3); color:#f3e1cc; font-size:11px; font-weight:700; padding:8px 16px; border-radius:3px; cursor:pointer; letter-spacing:0.05em; text-transform:uppercase; user-select:none; flex-shrink:0;">+ Add to Shelf</div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- Manual mode -->
+        <sc-if value="{{ isAbManual }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:220px 1fr; gap:44px; align-items:start;">
+            <!-- Live cover preview -->
+            <div>
+              <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:4px; border:1px solid rgba(243,225,204,0.09);">
+                <div style="{{ abCoverBgStyle }}"></div>
+                <div style="{{ abCoverSpineStyle }}"></div>
+                <div style="position:absolute; bottom:0; left:0; right:0; padding:16px; background:linear-gradient(to top,rgba(0,0,0,0.94),transparent);">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:15px; color:#f3e1cc; line-height:1.3;">{{ abTitleDisplay }}</div>
+                </div>
+              </div>
+              <div style="margin-top:16px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:10px;">Cover Palette</div>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px;">
+                  <sc-for list="{{ abPalettes }}" as="pal" hint-placeholder-count="8">
+                    <div style="{{ pal.swatchStyle }}" onClick="{{ pal.onSelect }}"></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <!-- Form -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div>
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Title</div>
+                <input value="{{ abTitle }}" onChange="{{ setAbTitle }}" placeholder="Book title" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:4px; padding:11px 14px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; outline:none;">
+              </div>
+              <div style="display:grid; grid-template-columns:2fr 1fr; gap:14px;">
+                <div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Author</div>
+                  <input value="{{ abAuthor }}" onChange="{{ setAbAuthor }}" placeholder="Author name" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:4px; padding:11px 14px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; outline:none;">
+                </div>
+                <div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Year</div>
+                  <input value="{{ abYear }}" onChange="{{ setAbYear }}" placeholder="2024" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:4px; padding:11px 14px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; outline:none;">
+                </div>
+              </div>
+              <div>
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Genres <span style="color:rgba(243,225,204,0.3); text-transform:none; letter-spacing:0;">(pick up to 2)</span></div>
+                <div style="display:flex; flex-wrap:wrap; gap:7px;">
+                  <sc-for list="{{ abGenreChips }}" as="chip" hint-placeholder-count="6">
+                    <span style="{{ chip.style }}" onClick="{{ chip.onToggle }}">{{ chip.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Shelf Status</div>
+                <div style="display:flex; gap:8px;">
+                  <sc-for list="{{ abStatusChips }}" as="chip" hint-placeholder-count="3">
+                    <span style="{{ chip.style }}" onClick="{{ chip.onSelect }}">{{ chip.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px;">Synopsis <span style="color:rgba(243,225,204,0.3); text-transform:none; letter-spacing:0;">(optional)</span></div>
+                <textarea onChange="{{ setAbSynopsis }}" placeholder="What's it about?" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:4px; padding:12px 14px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6; resize:vertical; min-height:80px; outline:none; display:block;"></textarea>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                <div onClick="{{ saveManualBook }}" style="{{ abSaveBtnStyle }}">Save to Shelf ✦</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </div>
+    </sc-if>
+
+    <!-- ════════════ CURRENTLY READING ════════════ -->
+    <sc-if value="{{ isReading }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ curReadingBook }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:52px; animation:fadeIn 0.35s ease;">
+          <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px;">Currently Reading</div>
+          <div style="display:grid; grid-template-columns:260px 1fr; gap:56px; align-items:start; max-width:960px;">
+            <div>
+              <div style="aspect-ratio:2/3; position:relative; overflow:hidden; border-radius:4px; border:1px solid rgba(243,225,204,0.09);">
+                <div style="{{ curReadingBook.bgStyle }}"></div>
+                <div style="{{ curReadingBook.spineLgStyle }}"></div>
+                <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.93),transparent);">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:18px; color:#f3e1cc; line-height:1.3;">{{ curReadingBook.title }}</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:'DM Serif Display',Georgia,serif; font-size:50px; color:#f3e1cc; line-height:1.02; margin-bottom:7px;">{{ curReadingBook.title }}</div>
+              <div style="color:rgba(243,225,204,0.65); font-size:17px; margin-bottom:5px;">{{ curReadingBook.author }}</div>
+              <div style="display:flex; gap:6px; margin:16px 0 32px;">
+                <sc-for list="{{ curReadingBook.genres }}" as="genre" hint-placeholder-count="2">
+                  <span style="font-size:11px; color:#f3e1cc; background:rgba(243,225,204,0.06); padding:3px 10px; border-radius:2px; letter-spacing:0.05em;">{{ genre }}</span>
+                </sc-for>
+              </div>
+              <!-- Progress -->
+              <div style="margin-bottom:32px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
+                  <div style="font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:0.08em; text-transform:uppercase;">Progress</div>
+                  <div style="font-size:32px; font-weight:700; color:#f3e1cc; line-height:1;">{{ progressPct }}</div>
+                </div>
+                <div ref="{{ trackRef }}" onPointerDown="{{ onTrackPointerDown }}" style="position:relative; height:16px; margin-bottom:14px; cursor:pointer; touch-action:none;">
+                  <div style="position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:5px; background:rgba(243,225,204,0.08); border-radius:3px; overflow:hidden; pointer-events:none;">
+                    <div style="{{ progressBarStyle }}"></div>
+                  </div>
+                  <div style="{{ thumbStyle }}"></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div onClick="{{ decProg }}" style="width:34px; height:34px; border:1px solid rgba(243,225,204,0.14); color:rgba(243,225,204,0.6); font-size:16px; font-weight:500; display:flex; align-items:center; justify-content:center; border-radius:3px; cursor:pointer; user-select:none;">−</div>
+                  <div style="flex:1; font-size:12px; color:rgba(255,255,255,0.55); text-align:center;">Page {{ currentPage }} of {{ curReadingBook.pages }}</div>
+                  <div onClick="{{ incProg }}" style="width:34px; height:34px; border:1px solid rgba(243,225,204,0.14); color:#f3e1cc; font-size:16px; font-weight:500; display:flex; align-items:center; justify-content:center; border-radius:3px; cursor:pointer; user-select:none;">+</div>
+                </div>
+              </div>
+              <!-- Notes -->
+              <div>
+                <div style="font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:12px;">Reading Notes</div>
+                <textarea onChange="{{ setNote }}" value="{{ readingNote }}" placeholder="What are you thinking about as you read…" style="width:100%; background:#141414; border:1px solid rgba(243,225,204,0.09); border-radius:4px; padding:16px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; resize:vertical; min-height:130px; outline:none; display:block;"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+  </main>
+</div>
+
+<!-- ════════════ SEND REC MODAL ════════════ -->
+<sc-if value="{{ showRec }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeRec }}" style="position:fixed; inset:0; background:rgba(0,0,0,0.82); z-index:200; display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease;">
+    <div onClick="{{ noProp }}" style="background:#141414; border:1px solid rgba(243,225,204,0.1); border-radius:8px; width:580px; max-width:92vw; max-height:88vh; overflow-y:auto; position:relative; animation:fadeUp 0.28s cubic-bezier(0.16,1,0.3,1) both;">
+
+      <!-- Modal header -->
+      <div style="padding:24px 28px 22px; border-bottom:1px solid rgba(243,225,204,0.07); display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <div style="font-family:'DM Serif Display',Georgia,serif; font-size:26px; color:#f3e1cc; margin-bottom:10px;">Send a Rec</div>
+          <!-- Step dots -->
+          <div style="display:flex; align-items:center; gap:7px;">
+            <sc-for list="{{ srSteps }}" as="step" hint-placeholder-count="3">
+              <div style="display:contents;">
+                <div style="{{ step.style }}">{{ step.n }}</div>
+                <sc-if value="{{ step.hasArrow }}" hint-placeholder-val="{{ false }}">
+                  <span style="color:rgba(243,225,204,0.2); font-size:10px;">→</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div onClick="{{ closeRec }}" style="color:rgba(255,255,255,0.55); font-size:22px; cursor:pointer; line-height:1; padding:2px 6px; user-select:none; margin-top:-2px;">×</div>
+      </div>
+
+      <!-- Step 1: Choose book -->
+      <sc-if value="{{ isS1 }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px;">1 — Choose a book</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:22px;">
+            <sc-for list="{{ srBooks }}" as="book" hint-placeholder-count="8">
+              <div style="{{ book.selStyle }}" onClick="{{ book.onSelect }}">
+                <div style="{{ book.miniStyle }}"></div>
+                <div style="min-width:0;">
+                  <div style="font-family:'DM Serif Display',Georgia,serif; font-size:14px; color:#f3e1cc; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ book.title }}</div>
+                  <div style="font-size:11px; color:rgba(255,255,255,0.55); margin-top:2px;">{{ book.author }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <div onClick="{{ srNext }}" style="{{ srNextBtnStyle }}">Choose Friend →</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Step 2: Choose friend -->
+      <sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px;">2 — Choose a friend</div>
+          <div style="display:flex; flex-direction:column; margin-bottom:22px;">
+            <sc-for list="{{ srFriends }}" as="friend" hint-placeholder-count="3">
+              <div style="{{ friend.selStyle }}" onClick="{{ friend.onSelect }}">
+                <div style="{{ friend.avatarStyle }}">{{ friend.avatar }}</div>
+                <div>
+                  <div style="font-size:15px; color:#f3e1cc; font-weight:500;">{{ friend.name }}</div>
+                  <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px;">{{ friend.booksRead }} books read · {{ friend.sharedBooks }} in common</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <div onClick="{{ srBack }}" style="border:1px solid rgba(243,225,204,0.12); color:rgba(243,225,204,0.5); font-size:12px; font-weight:500; padding:10px 18px; border-radius:3px; cursor:pointer; user-select:none;">← Back</div>
+            <div onClick="{{ srNext }}" style="{{ srNextBtnStyle }}">Write Note →</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Step 3: Write note -->
+      <sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px;">3 — Write your note</div>
+          <!-- Preview -->
+          <sc-if value="{{ srBook }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; gap:14px; align-items:center; background:#f0ebe0; border-radius:4px; padding:14px; margin-bottom:20px;">
+              <div style="{{ srBook.miniStyle }}"></div>
+              <div>
+                <div style="font-family:'DM Serif Display',Georgia,serif; font-size:17px; color:#f3e1cc; line-height:1.2;">{{ srBook.title }}</div>
+                <sc-if value="{{ srFriend }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px; color:#FBD509; margin-top:4px;">→ {{ srFriend.name }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+          <textarea onChange="{{ setSrNote }}" placeholder="Tell them why you thought of them…" style="width:100%; background:#f0ebe0; border:1px solid rgba(243,225,204,0.09); border-radius:4px; padding:16px; color:#f3e1cc; font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; resize:none; height:130px; outline:none; display:block; margin-bottom:20px;"></textarea>
+          <div style="display:flex; justify-content:space-between;">
+            <div onClick="{{ srBack }}" style="border:1px solid rgba(243,225,204,0.12); color:rgba(243,225,204,0.5); font-size:12px; font-weight:500; padding:10px 18px; border-radius:3px; cursor:pointer; user-select:none;">← Back</div>
+            <div onClick="{{ submitRec }}" style="background:#f3e1cc; color:#0a0a0a; font-size:12px; font-weight:700; padding:10px 24px; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; user-select:none;">Send Rec ✦</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Sent! -->
+      <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:52px 28px; text-align:center; animation:fadeUp 0.25s ease;">
+          <div style="font-size:36px; margin-bottom:16px; color:#f3e1cc;">✦</div>
+          <div style="font-family:'DM Serif Display',Georgia,serif; font-size:30px; color:#f3e1cc; margin-bottom:10px;">Rec sent</div>
+          <div style="color:rgba(255,255,255,0.55); font-size:14px; line-height:1.7; max-width:300px; margin:0 auto 28px;">It'll land in their inbox — with your note, not an algorithm.</div>
+          <div onClick="{{ closeRec }}" style="background:#f3e1cc; color:#0a0a0a; font-size:12px; font-weight:700; padding:11px 28px; border-radius:3px; cursor:pointer; letter-spacing:0.07em; text-transform:uppercase; display:inline-block; user-select:none;">Done</div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1440, &quot;height&quot;: 900 }
+}">
+class Component extends DCLogic {
+  BOOKS = [
+    { id:1, title:"Piranesi", author:"Susanna Clarke", year:2020, pages:272, genres:["Fantasy","Mystery"], coverBg:"linear-gradient(155deg,#2b2b2b,#0c0c0c)", coverSpine:"#4a4a4a", status:"read", rating:5, dateRead:"Mar 2024", synopsis:"In a house of infinite hallways and tidal statues, Piranesi keeps meticulous journals. Someone else is also here — and the truth of the House is more dangerous than he knows.", myNote:"Completely transportive. Intimate and vast at once. Finished it in one sitting and cried at the last page.", friendTakes:[{name:"Theo Vance",initials:"TV",rating:4,note:"Weird and wonderful — the mythology is incredible. The loneliness of it got me."}] },
+    { id:2, title:"The Secret History", author:"Donna Tartt", year:1992, pages:559, genres:["Literary Fiction","Thriller"], coverBg:"linear-gradient(155deg,#232323,#080808)", coverSpine:"#3f3f3f", status:"read", rating:5, dateRead:"Jan 2024", synopsis:"Under the influence of a charismatic professor, a small group of Greek students at a Vermont college discover beauty in amorality — and commit a terrible act they can never undo.", myNote:"The reversed mystery structure — you know the what from page one, the why unfolds slowly — is brilliant. Bunny is one of the most vivid characters in all of fiction.", friendTakes:[{name:"Isha Mehta",initials:"IM",rating:5,note:"This is my roman à clef for certain people I used to know. Never not thinking about it."}] },
+    { id:3, title:"The Master and Margarita", author:"Mikhail Bulgakov", year:1967, pages:432, genres:["Satire","Fantasy"], coverBg:"linear-gradient(155deg,#242424,#0a0a0a)", coverSpine:"#525252", status:"read", rating:4, dateRead:"Dec 2023", synopsis:"The Devil visits Soviet Moscow with his retinue, causing chaos and revealing hypocrisy — intercut with a haunting vision of Pontius Pilate confronting a wandering philosopher.", myNote:"The Moscow chapters are deliriously fun. The Pilate sections hit different from everything else. Translation matters enormously here.", friendTakes:[] },
+    { id:4, title:"Bunny", author:"Mona Awad", year:2019, pages:305, genres:["Horror","Literary Fiction"], coverBg:"linear-gradient(155deg,#1e1e1e,#070707)", coverSpine:"#3a3a3a", status:"reading", rating:null, dateRead:null, synopsis:"Samantha is an outsider at her elite MFA program, until the Bunnies — four perfect, unsettling girls — invite her in. Their creative process is stranger than she imagined.", myNote:"Halfway through and completely unhinged in the best way. This book is eating my brain.", friendTakes:[] },
+    { id:5, title:"The Dispossessed", author:"Ursula K. Le Guin", year:1974, pages:387, genres:["Sci-Fi","Philosophy"], coverBg:"linear-gradient(155deg,#282828,#0b0b0b)", coverSpine:"#484848", status:"want", rating:null, dateRead:null, synopsis:"A physicist from an anarchist moon visits the capitalist home planet for the first time. An ambiguous utopia told in alternating timelines — perhaps Le Guin's most political work.", myNote:null, friendTakes:[] },
+    { id:6, title:"Invisible Cities", author:"Italo Calvino", year:1972, pages:165, genres:["Literary Fiction","Philosophy"], coverBg:"linear-gradient(155deg,#202020,#090909)", coverSpine:"#404040", status:"want", rating:null, dateRead:null, synopsis:"Marco Polo describes fifty-five fantastical cities to Kublai Khan. Each city is Venice, seen differently. A meditation on memory, desire, and what cities are made of.", myNote:null, friendTakes:[] },
+    { id:7, title:"Demons", author:"Fyodor Dostoevsky", year:1872, pages:665, genres:["Literary Fiction","Political"], coverBg:"linear-gradient(155deg,#262626,#0d0d0d)", coverSpine:"#4d4d4d", status:"read", rating:4, dateRead:"Oct 2023", synopsis:"A provincial town is shaken by a radical nihilist cell, driven by the mesmerizing Stavrogin and his manipulative protégé Verkhovensky.", myNote:"Stavrogin is one of the greatest villains in all of fiction — utterly empty, utterly compelling. The last hundred pages are devastating.", friendTakes:[] },
+    { id:8, title:"Normal People", author:"Sally Rooney", year:2018, pages:266, genres:["Literary Fiction","Romance"], coverBg:"linear-gradient(155deg,#1a1a1a,#060606)", coverSpine:"#363636", status:"read", rating:3, dateRead:"Jul 2023", synopsis:"Connell and Marianne navigate their complicated relationship from secondary school to Trinity College, never quite managing to say what they mean to each other.", myNote:"The punctuation thing is irritating but the emotional dynamics are devastating. Marianne's arc is the whole point.", friendTakes:[] },
+  ];
+
+  CATALOG = [
+    { id:101, title:"Annihilation", author:"Jeff VanderMeer", year:2014, pages:195, genres:["Sci-Fi","Horror"], coverBg:"linear-gradient(155deg,#252525,#0a0a0a)", coverSpine:"#454545", status:"want", rating:null, dateRead:null, synopsis:"A biologist joins an expedition into Area X, a mysterious zone where nature has reclaimed the rules.", myNote:null, friendTakes:[] },
+    { id:102, title:"Orbital", author:"Samantha Harvey", year:2023, pages:207, genres:["Literary Fiction","Sci-Fi"], coverBg:"linear-gradient(155deg,#2a2a2a,#0c0c0c)", coverSpine:"#4c4c4c", status:"want", rating:null, dateRead:null, synopsis:"Six astronauts orbit Earth sixteen times a day, watching sixteen sunrises, in a quiet meditation on the planet below.", myNote:null, friendTakes:[] },
+    { id:103, title:"Tomorrow, and Tomorrow, and Tomorrow", author:"Gabrielle Zevin", year:2022, pages:401, genres:["Literary Fiction","Romance"], coverBg:"linear-gradient(155deg,#1f1f1f,#080808)", coverSpine:"#3d3d3d", status:"want", rating:null, dateRead:null, synopsis:"Two childhood friends become video game designers, building worlds together over thirty years of friendship and rivalry.", myNote:null, friendTakes:[] },
+    { id:104, title:"The Fifth Season", author:"N.K. Jemisin", year:2015, pages:468, genres:["Fantasy","Sci-Fi"], coverBg:"linear-gradient(155deg,#232323,#090909)", coverSpine:"#474747", status:"want", rating:null, dateRead:null, synopsis:"In a world plagued by catastrophic climate change, a mother searches for her daughter while civilization collapses.", myNote:null, friendTakes:[] },
+    { id:105, title:"Convenience Store Woman", author:"Sayaka Murata", year:2016, pages:163, genres:["Literary Fiction","Satire"], coverBg:"linear-gradient(155deg,#272727,#0b0b0b)", coverSpine:"#4a4a4a", status:"want", rating:null, dateRead:null, synopsis:"Keiko has worked at the same convenience store for eighteen years and finds a strange comfort in its rules and rhythms.", myNote:null, friendTakes:[] },
+    { id:106, title:"Klara and the Sun", author:"Kazuo Ishiguro", year:2021, pages:303, genres:["Sci-Fi","Literary Fiction"], coverBg:"linear-gradient(155deg,#1d1d1d,#070707)", coverSpine:"#3a3a3a", status:"want", rating:null, dateRead:null, synopsis:"An artificial friend observes the world from a shop window, waiting to be chosen, and to understand what love requires.", myNote:null, friendTakes:[] },
+  ];
+
+  PALETTES = [
+    { bg:"linear-gradient(155deg,#2b2b2b,#0c0c0c)", spine:"#4a4a4a" },
+    { bg:"linear-gradient(155deg,#232323,#080808)", spine:"#3f3f3f" },
+    { bg:"linear-gradient(155deg,#282828,#0b0b0b)", spine:"#484848" },
+    { bg:"linear-gradient(155deg,#202020,#090909)", spine:"#404040" },
+    { bg:"linear-gradient(155deg,#3a1a4a,#160a1e)", spine:"#8a3a9e" },
+    { bg:"linear-gradient(155deg,#252525,#0a0a0a)", spine:"#454545" },
+    { bg:"linear-gradient(155deg,#3a3a14,#181806)", spine:"#525252" },
+    { bg:"linear-gradient(155deg,#262626,#0d0d0d)", spine:"#4d4d4d" },
+  ];
+
+  GENRE_OPTIONS = ["Fantasy","Sci-Fi","Literary Fiction","Horror","Romance","Thriller","Mystery","Philosophy"];
+
+  FRIENDS = [
+    { id:1, name:"Theo Vance", handle:"@theovance", avatar:"TV", avatarBg:"#2a2a2a", bio:"Reading nothing but cyberpunk and doorstopper classics. Will recommend Le Guin unprompted. Currently: everything Jeff VanderMeer ever wrote.", booksRead:94, sharedBooks:3, recentReads:[1,3,5] },
+    { id:2, name:"Isha Mehta", handle:"@ishamehta", avatar:"IM", avatarBg:"#242424", bio:"Literary fiction and horror. Prefers ambiguous endings. Sometimes takes a year to finish one book, which is fine.", booksRead:61, sharedBooks:2, recentReads:[2,4] },
+    { id:3, name:"Cas Laurent", handle:"@caslaurent", avatar:"CL", avatarBg:"#1e1e1e", bio:"Translator. Reading in four languages simultaneously, which seems fine until it isn't.", booksRead:148, sharedBooks:1, recentReads:[6,7] },
+  ];
+
+  state = {
+    screen: 'shelf',
+    activeBookId: null,
+    activeFriendId: 1,
+    activeTab: 'read',
+    expandedInboxId: 1,
+    sendRec: { open:false, step:1, bookId:null, friendId:null, note:'', sent:false },
+    inbox: [
+      { id:1, fromId:1, bookTitle:"Annihilation", bookAuthor:"Jeff VanderMeer", year:2014, genres:["Sci-Fi","Horror"], coverBg:"linear-gradient(155deg,#252525,#0a0a0a)", coverSpine:"#454545", note:"You'll spiral in the best way. Left me genuinely unsettled for weeks — like, architecturally unsettled. Read it in one sitting.", dateSent:"2 days ago", status:"unread" },
+      { id:2, fromId:2, bookTitle:"My Year of Rest and Relaxation", bookAuthor:"Ottessa Moshfegh", year:2018, genres:["Literary Fiction","Dark Comedy"], coverBg:"linear-gradient(155deg,#3a2010,#160c05)", coverSpine:"#7a4a20", note:"The vibe is deeply wrong in exactly the right way. Something about it felt like being watched. I thought of you.", dateSent:"5 days ago", status:"unread" },
+      { id:3, fromId:3, bookTitle:"Flights", bookAuthor:"Olga Tokarczuk", year:2007, genres:["Literary Fiction","Travel"], coverBg:"linear-gradient(155deg,#1a1a3a,#0a0a18)", coverSpine:"#3a3a7a", note:"Read this and tell me what you think about continuity. Changed how I feel about narrative structure entirely.", dateSent:"1 week ago", status:"read" },
+    ],
+    readingProgress: 60,
+    readingNote: '',
+    customBooks: [],
+    addedCatalogIds: [],
+    ab: { mode:'search', query:'', title:'', author:'', year:'', synopsis:'', genres:[], status:'want', paletteIdx:0 },
+    auth: { mode:'signin', name:'', email:'', password:'' },
+    logoAnimToggle: false,
+    ratingOverrides: {},
+    sortMode: 'added',
+    sortDropdownOpen: false,
+  };
+
+  heroSectionRef = (node) => { this._heroSection = node; if (node) this.computeHeroTarget(); };
+  heroMediaRef = (node) => { this._heroMedia = node; };
+  heroContentRef = (node) => { this._heroContent = node; };
+  spotlightRef = (node) => { this._spotlight = node; };
+
+  _asciiText = (() => {
+    const chars = ['+','/','\\','=','|','~','x'];
+    const cols = 100, lines = 30;
+    const rows = [];
+    for (let r = 0; r < lines; r++) {
+      let row = '';
+      for (let c = 0; c < cols; c++) row += Math.random() > 0.5 ? chars[Math.floor(Math.random()*chars.length)] : ' ';
+      rows.push(row);
+    }
+    return rows.join('\n');
+  })();
+
+  _spotTarget = { x: 400, y: 200 };
+  _spotCurrent = { x: 400, y: 200 };
+
+  onHeroPointerMove = (ev) => {
+    const rect = ev.currentTarget.getBoundingClientRect();
+    this._spotTarget = { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+  };
+
+  _heroTarget = 0;
+  _heroCurrent = 0;
+
+  computeHeroTarget = () => {
+    const sec = this._heroSection;
+    if (!sec) return;
+    const rect = sec.getBoundingClientRect();
+    const total = sec.offsetHeight - window.innerHeight;
+    if (total <= 0) { this._heroTarget = 0; return; }
+    this._heroTarget = Math.max(0, Math.min(1, (-rect.top) / total));
+  };
+
+  heroTick = () => {
+    this.computeHeroTarget();
+    // exponential smoothing — eases the visual toward the scroll position instead of snapping to it 1:1
+    this._heroCurrent += (this._heroTarget - this._heroCurrent) * 0.085;
+    if (Math.abs(this._heroTarget - this._heroCurrent) < 0.0005) this._heroCurrent = this._heroTarget;
+    const media = this._heroMedia, content = this._heroContent;
+    if (media && content) {
+      const p = this._heroCurrent;
+      const ease = p * p * (3 - 2 * p); // smootherstep for a gentler ease in/out feel
+      media.style.transform = `scale(${1 + 0.4 * ease})`;
+      content.style.transform = `scale(${1 - 0.15 * ease})`;
+      content.style.opacity = `${1 - Math.min(1, ease / 0.6)}`;
+    }
+    if (this._spotlight) {
+      this._spotCurrent.x += (this._spotTarget.x - this._spotCurrent.x) * 0.1;
+      this._spotCurrent.y += (this._spotTarget.y - this._spotCurrent.y) * 0.1;
+      this._spotlight.style.transform = `translate(${this._spotCurrent.x}px, ${this._spotCurrent.y}px) translate(-50%,-50%)`;
+    }
+    this._heroRaf = requestAnimationFrame(this.heroTick);
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.computeHeroTarget, { passive: true });
+    window.addEventListener('resize', this.computeHeroTarget);
+    this._heroRaf = requestAnimationFrame(this.heroTick);
+  }
+
+  trackRef = (node) => { this._trackNode = node; };
+
+  updateProgressFromEvent(ev) {
+    if (!this._trackNode) return;
+    const rect = this._trackNode.getBoundingClientRect();
+    let pct = ((ev.clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, Math.round(pct)));
+    this.setState({ readingProgress: pct });
+  }
+
+  onTrackPointerDown = (ev) => {
+    ev.preventDefault();
+    this.updateProgressFromEvent(ev);
+    const move = (e) => this.updateProgressFromEvent(e);
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  emberRef = (node) => {
+    if (!node || node === this._emberCanvas) return;
+    this._emberCanvas = node;
+    const ctx = node.getContext('2d');
+    const N = 26;
+    let embers = null;
+    const resize = () => {
+      const w = node.offsetWidth || node.parentElement.offsetWidth || 640;
+      const h = node.offsetHeight || node.parentElement.offsetHeight || 480;
+      node.width = w; node.height = h;
+      if (!embers) {
+        embers = Array.from({length:N}, () => ({
+          x: Math.random()*w, y: Math.random()*h,
+          r: 1 + Math.random()*2, s: 0.2 + Math.random()*0.5,
+          drift: (Math.random()-0.5)*0.3, a: 0.15 + Math.random()*0.35,
+        }));
+      }
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(node.parentElement);
+    this._emberRo = ro;
+    const tick = () => {
+      ctx.clearRect(0,0,node.width,node.height);
+      if (embers) for (const p of embers) {
+        p.y -= p.s; p.x += p.drift;
+        if (p.y < -10) { p.y = node.height+10; p.x = Math.random()*node.width; }
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(230,119,46,${p.a})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+      }
+      this._emberRaf = requestAnimationFrame(tick);
+    };
+    tick();
+  };
+
+  componentWillUnmount() {
+    if (this._emberRaf) cancelAnimationFrame(this._emberRaf);
+    if (this._emberRo) this._emberRo.disconnect();
+    window.removeEventListener('scroll', this.computeHeroTarget);
+    window.removeEventListener('resize', this.computeHeroTarget);
+    if (this._heroRaf) cancelAnimationFrame(this._heroRaf);
+  }
+
+  allBooks() { return [...this.BOOKS, ...this.state.customBooks]; }
+
+  eb(b) {
+    if (!b) return null;
+    const stars = b.rating ? '★'.repeat(b.rating)+'☆'.repeat(5-b.rating) : '';
+    return {
+      ...b, stars,
+      hasTakes: b.friendTakes && b.friendTakes.length > 0,
+      bgStyle: { position:'absolute', inset:0, background:b.coverBg },
+      spineStyle: { position:'absolute', left:0, top:0, width:'6px', height:'100%', background:b.coverSpine, opacity:0.8 },
+      spineLgStyle: { position:'absolute', left:0, top:0, width:'8px', height:'100%', background:b.coverSpine },
+      miniStyle: { width:'28px', height:'44px', borderRadius:'2px', background:b.coverBg, borderLeft:`4px solid ${b.coverSpine}`, flexShrink:0 },
+      friendTakes: (b.friendTakes||[]).map(t => ({
+        ...t,
+        stars: t.rating ? '★'.repeat(t.rating)+'☆'.repeat(5-t.rating) : '',
+      })),
+    };
+  }
+
+  ns(active) {
+    return {
+      display:'flex', alignItems:'center', gap:'6px',
+      padding:'0 14px', cursor:'pointer', height:'100%',
+      borderBottom: active ? '2px solid #FBD509' : '2px solid transparent',
+      borderTop: '2px solid transparent',
+      fontSize:'12px', fontWeight: active ? '600' : '400',
+      transition:'all 0.15s', userSelect:'none',
+      letterSpacing:'0.07em', textTransform:'uppercase',
+      whiteSpace:'nowrap',
+    };
+  }
+
+  navLabelChars(label, active) {
+    return label.split('').map((ch, i) => ({
+      ch: ch === ' ' ? '\u00A0' : ch,
+      style: {
+        color: active ? '#FBD509' : '#f7f3ea',
+        transition: 'color 0.35s ease',
+        transitionDelay: (i * 25) + 'ms',
+      },
+    }));
+  }
+
+  tabChip(active) {
+    return {
+      padding:'12px 0', cursor:'pointer',
+      color: active ? '#f3e1cc' : 'rgba(255,255,255,0.55)',
+      borderBottom: active ? '2px solid #f3e1cc' : '2px solid transparent',
+      fontSize:'12px', fontWeight: active ? '600' : '400',
+      letterSpacing:'0.08em', textTransform:'uppercase', userSelect:'none',
+    };
+  }
+
+  ts(active) {
+    return {
+      padding:'14px 0', cursor:'pointer',
+      color: active ? '#f3e1cc' : 'rgba(255,255,255,0.55)',
+      borderBottom: active ? '2px solid #f3e1cc' : '2px solid transparent',
+      fontSize:'12px', fontWeight: active ? '600' : '400',
+      letterSpacing:'0.08em', textTransform:'uppercase',
+      transition:'all 0.15s', userSelect:'none',
+    };
+  }
+
+  ss(active, done) {
+    return {
+      width:'22px', height:'22px', borderRadius:'50%',
+      display:'flex', alignItems:'center', justifyContent:'center',
+      fontSize:'11px', fontWeight:'700',
+      background: done ? 'rgba(243,225,204,0.12)' : (active ? '#f3e1cc' : 'rgba(243,225,204,0.08)'),
+      color: done ? '#0a0a0a' : (active ? '#0a0a0a' : 'rgba(255,255,255,0.55)'),
+    };
+  }
+
+  renderVals() {
+    const { screen, activeBookId, activeFriendId, activeTab, expandedInboxId, sendRec, inbox, readingProgress, readingNote, customBooks, addedCatalogIds, ab, auth, logoAnimToggle, ratingOverrides, sortMode, sortDropdownOpen } = this.state;
+    const e = b => this.eb(b);
+    const ALL = this.allBooks();
+
+    const readB   = ALL.filter(b => b.status === 'read');
+    const readingB = ALL.filter(b => b.status === 'reading');
+    const wantB   = ALL.filter(b => b.status === 'want');
+    const tabB    = activeTab==='read' ? readB : activeTab==='reading' ? readingB : wantB;
+    const sortedTabB = [...tabB];
+    if (sortMode === 'liked') {
+      sortedTabB.sort((a,b) => (ratingOverrides[b.id] ?? b.rating ?? -1) - (ratingOverrides[a.id] ?? a.rating ?? -1));
+    } else if (sortMode === 'recent') {
+      sortedTabB.sort((a,b) => (Date.parse(b.dateRead||'') || -Infinity) - (Date.parse(a.dateRead||'') || -Infinity));
+    } else {
+      sortedTabB.reverse(); // 'added' — most recently added first
+    }
+    const shelfBooks = sortedTabB.map(b => ({ ...e(b), onClick: () => this.setState({ screen:'book', activeBookId:b.id }) }));
+    const sortOptionDefs = [
+      { key:'liked', label:'Most Liked' },
+      { key:'recent', label:'Recently Finished' },
+      { key:'added', label:'Date Added' },
+    ];
+    const sortLabels = { liked:'Most Liked', recent:'Recently Finished', added:'Date Added' };
+    const sortOptions = sortOptionDefs.map(o => ({
+      label: o.label,
+      onClick: () => this.setState({ sortMode: o.key, sortDropdownOpen: false }),
+      style: {
+        fontSize:'12px', fontWeight: sortMode===o.key ? '700' : '500', padding:'10px 14px', cursor:'pointer',
+        color: sortMode===o.key ? '#FBD509' : '#f7f3ea',
+        background: sortMode===o.key ? 'rgba(251,213,9,0.08)' : 'transparent',
+        transition:'background 0.15s ease',
+      },
+    }));
+
+    const unreadCount = inbox.filter(i => i.status === 'unread').length;
+
+    const navItems = [
+      { label:'My Shelf',  labelChars:this.navLabelChars('My Shelf', screen==='shelf'||screen==='book'), style:this.ns(screen==='shelf'||screen==='book'),    onClick:()=>this.setState({screen:'shelf', activeBookId:null}) },
+      { label:'Reading',   labelChars:this.navLabelChars('Reading', screen==='reading'), style:this.ns(screen==='reading'),                   onClick:()=>this.setState({screen:'reading'}) },
+      { label:'Inbox',     labelChars:this.navLabelChars('Inbox', screen==='inbox'), count:unreadCount||null, style:this.ns(screen==='inbox'),  onClick:()=>this.setState({screen:'inbox'}) },
+      { label:'Friends',   labelChars:this.navLabelChars('Friends', screen==='friend'), style:this.ns(screen==='friend'),                    onClick:()=>this.setState({screen:'friend'}) },
+    ];
+
+    const inboxItems = inbox.map(item => {
+      const f = this.FRIENDS.find(x => x.id === item.fromId) || {};
+      const exp = expandedInboxId === item.id;
+      return {
+        ...item,
+        senderName: f.name || '',
+        senderAvatar: f.avatar || '?',
+        isUnread: item.status === 'unread',
+        isAdded: item.status === 'added',
+        isNotAdded: item.status !== 'added',
+        isExpanded: exp,
+        expandIcon: exp ? '↑' : '↓',
+        avatarStyle: { width:'38px', height:'38px', borderRadius:'50%', background:f.avatarBg||'#222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', fontWeight:'700', color:'#f7f3ea', flexShrink:0 },
+        miniCoverStyle: { width:'22px', height:'33px', borderRadius:'2px', background:item.coverBg, borderLeft:`3px solid ${item.coverSpine}`, flexShrink:0 },
+        onToggle: () => this.setState({ expandedInboxId: exp ? null : item.id }),
+        onAdd: (ev) => { ev.stopPropagation(); this.setState(s => ({ inbox: s.inbox.map(i => i.id===item.id ? {...i,status:'added'} : i) })); },
+        onDismiss: (ev) => { ev.stopPropagation(); this.setState(s => ({ inbox: s.inbox.filter(i => i.id!==item.id) })); },
+      };
+    });
+
+    const srBooks = ALL.map(b => ({
+      ...e(b),
+      isSelected: sendRec.bookId === b.id,
+      onSelect: () => this.setState(s => ({ sendRec:{...s.sendRec, bookId:b.id} })),
+      selStyle: { display:'flex', gap:'12px', alignItems:'center', padding:'10px 12px', borderRadius:'4px', cursor:'pointer',
+        border: sendRec.bookId===b.id ? '1px solid rgba(243,225,204,0.4)' : '1px solid rgba(243,225,204,0.08)',
+        background: sendRec.bookId===b.id ? 'rgba(243,225,204,0.06)' : 'transparent', transition:'all 0.2s ease' },
+    }));
+
+    const srFriends = this.FRIENDS.map(f => ({
+      ...f,
+      isSelected: sendRec.friendId === f.id,
+      onSelect: () => this.setState(s => ({ sendRec:{...s.sendRec, friendId:f.id} })),
+      selStyle: { display:'flex', alignItems:'center', gap:'14px', padding:'13px 16px', borderRadius:'4px', cursor:'pointer', marginBottom:'8px',
+        border: sendRec.friendId===f.id ? '1px solid rgba(243,225,204,0.4)' : '1px solid rgba(243,225,204,0.08)',
+        background: sendRec.friendId===f.id ? 'rgba(243,225,204,0.06)' : 'transparent', transition:'all 0.15s' },
+      avatarStyle: { width:'42px', height:'42px', borderRadius:'50%', background:f.avatarBg, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:'700', color:'#f7f3ea', flexShrink:0 },
+    }));
+
+    const srBook   = e(this.BOOKS.find(b => b.id === sendRec.bookId));
+    const srFriend = this.FRIENDS.find(f => f.id === sendRec.friendId);
+
+    const srSteps = [1,2,3].map((n,i) => ({
+      n, label:['Book','Friend','Note'][i],
+      hasArrow: n < 3,
+      style: this.ss(sendRec.step===n, sendRec.step>n),
+    }));
+
+    const srNextBtnStyle = {
+      background: '#f3e1cc', color: '#0a0a0a', fontSize:'12px', fontWeight:'700',
+      padding:'10px 22px', borderRadius:'3px', cursor:'pointer',
+      letterSpacing:'0.07em', textTransform:'uppercase', userSelect:'none',
+    };
+
+    const allFriends = this.FRIENDS.map(f => ({
+      ...f,
+      onClick: () => this.setState({ activeFriendId: f.id }),
+      cardStyle: { display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', borderRadius:'5px', cursor:'pointer', marginBottom:'4px', transition:'background 0.2s ease, border-color 0.2s ease',
+        background: f.id===activeFriendId ? 'rgba(251,213,9,0.1)' : 'transparent',
+        border: f.id===activeFriendId ? '1px solid rgba(251,213,9,0.25)' : '1px solid transparent' },
+      avatarStyle: { width:'30px', height:'30px', borderRadius:'50%', background:f.avatarBg, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:'700', color:'#f7f3ea', flexShrink:0 },
+    }));
+
+    const curFriend = this.FRIENDS.find(f => f.id===activeFriendId) || this.FRIENDS[0];
+    const curFriendAvatarStyle = {
+      width:'60px', height:'60px', borderRadius:'50%', background:curFriend.avatarBg,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      fontSize:'20px', fontWeight:'700', color:'#f7f3ea', flexShrink:0,
+    };
+
+    const friendBooks = curFriend
+      ? ALL.filter(b => curFriend.recentReads.includes(b.id)).map(b => ({
+          ...e(b), onClick: () => this.setState({ screen:'book', activeBookId:b.id })
+        }))
+      : [];
+
+    const curBook = e(ALL.find(b => b.id===activeBookId));
+    const curBookRating = curBook ? (ratingOverrides[curBook.id] ?? curBook.rating ?? 0) : 0;
+    const curBookStars = [1,2,3,4,5].map(n => ({
+      onClick: () => this.setState(s => ({ ratingOverrides: {...s.ratingOverrides, [curBook.id]: n} })),
+      style: {
+        fontSize:'24px', cursor:'pointer', userSelect:'none', transition:'transform 0.15s ease, color 0.15s ease',
+        color: n <= curBookRating ? '#FBD509' : 'rgba(243,225,204,0.2)',
+      },
+    }));
+    const curReadingBook = e(ALL.find(b => b.status==='reading'));
+    const currentPage = curReadingBook ? Math.round(curReadingBook.pages * readingProgress / 100) : 0;
+
+    const progressBarStyle = {
+      height:'100%', width: readingProgress+'%',
+      background:'linear-gradient(90deg,#f3e1cc,rgba(243,225,204,0.5))',
+      borderRadius:'3px', transition:'width 0.35s ease',
+    };
+
+    return {
+      isShelf:   screen==='shelf',
+      isBook:    screen==='book',
+      isInbox:   screen==='inbox',
+      isFriend:  screen==='friend',
+      isReading: screen==='reading',
+      isAddBook: screen==='addBook',
+      isLanding: screen==='landing',
+      isAuth: screen==='auth',
+
+      logoChars: "SHELF".split('').map((ch,i) => ({
+        ch,
+        style: { display:'inline-block', animation:`${logoAnimToggle ? 'logoCharInAlt' : 'logoCharIn'} 1.3s cubic-bezier(0.16,1,0.3,1) both`, animationDelay: (i*60)+'ms' },
+      })),
+      emberRef: this.emberRef,
+      heroSectionRef: this.heroSectionRef,
+      heroMediaRef: this.heroMediaRef,
+      heroContentRef: this.heroContentRef,
+      spotlightRef: this.spotlightRef,
+      onHeroPointerMove: this.onHeroPointerMove,
+      asciiText: this._asciiText,
+      trendingBooks: this.CATALOG.map(b => ({ ...this.eb(b) })),
+      headlineWords: "Every book worth reading came from someone.".split(' ').map((w,i,arr) => ({
+        text: i < arr.length-1 ? w+'\u00A0' : w,
+        outerStyle: { display:'inline-block', overflow:'hidden', verticalAlign:'top' },
+        innerStyle: { display:'inline-block', animation:`wordUp 0.7s cubic-bezier(0.16,1,0.3,1) both`, animationDelay: (i*70)+'ms' },
+      })),
+      enterShelfChars: "Enter Your Shelf →".split('').map((ch,i) => ({
+        ch: ch === ' ' ? '\u00A0' : ch,
+        outerStyle: { display:'inline-block', overflow:'hidden', verticalAlign:'top' },
+        innerStyle: { display:'inline-block', animation:'charLoop 3.2s ease-in-out infinite', animationDelay: (i*15)+'ms' },
+      })),
+      navItems, unreadCount,
+      openAddBook: () => this.setState({ screen:'addBook' }),
+      goLanding: () => this.setState(s => ({ screen:'landing', logoAnimToggle: !s.logoAnimToggle })),
+      enterShelf: () => this.setState({ screen:'auth' }),
+      enterApp: () => this.setState({ screen:'shelf' }),
+
+      isAuthSignup: auth.mode==='signup',
+      authTabSigninStyle: {
+        padding:'12px 0', cursor:'pointer', fontSize:'12px', fontWeight: auth.mode==='signin' ? '700':'400',
+        letterSpacing:'0.08em', textTransform:'uppercase', userSelect:'none',
+        color: auth.mode==='signin' ? '#f7f3ea' : 'rgba(247,243,234,0.4)',
+        borderBottom: auth.mode==='signin' ? '2px solid #FBD509' : '2px solid transparent',
+      },
+      authTabSignupStyle: {
+        padding:'12px 0', cursor:'pointer', fontSize:'12px', fontWeight: auth.mode==='signup' ? '700':'400',
+        letterSpacing:'0.08em', textTransform:'uppercase', userSelect:'none',
+        color: auth.mode==='signup' ? '#f7f3ea' : 'rgba(247,243,234,0.4)',
+        borderBottom: auth.mode==='signup' ? '2px solid #FBD509' : '2px solid transparent',
+      },
+      setAuthSignin: () => this.setState(s => ({ auth:{...s.auth, mode:'signin'} })),
+      setAuthSignup: () => this.setState(s => ({ auth:{...s.auth, mode:'signup'} })),
+      authInputStyle: { width:'100%', background:'rgba(247,243,234,0.06)', border:'1px solid rgba(247,243,234,0.15)', borderRadius:'4px', padding:'12px 14px', color:'#f7f3ea', fontFamily:"'Space Grotesk',sans-serif", fontSize:'13px', outline:'none', boxSizing:'border-box' },
+      authName: auth.name,
+      authEmail: auth.email,
+      authPassword: auth.password,
+      setAuthName: (ev) => this.setState(s => ({ auth:{...s.auth, name:ev.target.value} })),
+      setAuthEmail: (ev) => this.setState(s => ({ auth:{...s.auth, email:ev.target.value} })),
+      setAuthPassword: (ev) => this.setState(s => ({ auth:{...s.auth, password:ev.target.value} })),
+      authSubmitLabel: auth.mode==='signin' ? 'Sign In' : 'Create Account',
+      authSwitchPrompt: auth.mode==='signin' ? "Don't have an account?" : 'Already have an account?',
+      authSwitchLabel: auth.mode==='signin' ? 'Sign up' : 'Sign in',
+      authSwitchAction: () => this.setState(s => ({ auth:{...s.auth, mode: s.auth.mode==='signin' ? 'signup' : 'signin'} })),
+
+      isAbSearch: ab.mode==='search',
+      isAbManual: ab.mode==='manual',
+      abModeSearchStyle: this.tabChip(ab.mode==='search'),
+      abModeManualStyle: this.tabChip(ab.mode==='manual'),
+      setModeSearch: () => this.setState(s => ({ ab:{...s.ab, mode:'search'} })),
+      setModeManual: () => this.setState(s => ({ ab:{...s.ab, mode:'manual'} })),
+
+      abQuery: ab.query,
+      setAbQuery: (ev) => this.setState(s => ({ ab:{...s.ab, query:ev.target.value} })),
+      abResults: this.CATALOG
+        .filter(b => !ab.query || (b.title+' '+b.author).toLowerCase().includes(ab.query.toLowerCase()))
+        .map(b => ({
+          ...e(b),
+          isAdded: addedCatalogIds.includes(b.id),
+          isNotAdded: !addedCatalogIds.includes(b.id),
+          onAdd: () => this.setState(s => ({
+            addedCatalogIds: [...s.addedCatalogIds, b.id],
+            customBooks: [...s.customBooks, {...b}],
+          })),
+        })),
+
+      abTitle: ab.title,
+      abTitleDisplay: ab.title || 'Untitled',
+      abAuthor: ab.author,
+      abYear: ab.year,
+      setAbTitle: (ev) => this.setState(s => ({ ab:{...s.ab, title:ev.target.value} })),
+      setAbAuthor: (ev) => this.setState(s => ({ ab:{...s.ab, author:ev.target.value} })),
+      setAbYear: (ev) => this.setState(s => ({ ab:{...s.ab, year:ev.target.value} })),
+      setAbSynopsis: (ev) => this.setState(s => ({ ab:{...s.ab, synopsis:ev.target.value} })),
+
+      abCoverBgStyle: { position:'absolute', inset:0, background: this.PALETTES[ab.paletteIdx].bg },
+      abCoverSpineStyle: { position:'absolute', left:0, top:0, width:'8px', height:'100%', background: this.PALETTES[ab.paletteIdx].spine },
+      abPalettes: this.PALETTES.map((p,i) => ({
+        onSelect: () => this.setState(s => ({ ab:{...s.ab, paletteIdx:i} })),
+        swatchStyle: {
+          aspectRatio:'1', borderRadius:'3px', cursor:'pointer', background:p.bg,
+          border: ab.paletteIdx===i ? '2px solid #f3e1cc' : '2px solid transparent',
+          boxShadow: ab.paletteIdx===i ? '0 0 0 1px rgba(243,225,204,0.3)' : 'none',
+        },
+      })),
+
+      abGenreChips: this.GENRE_OPTIONS.map(g => {
+        const sel = ab.genres.includes(g);
+        return {
+          label: g, isSelected: sel,
+          onToggle: () => this.setState(s => {
+            const has = s.ab.genres.includes(g);
+            let genres;
+            if (has) genres = s.ab.genres.filter(x => x!==g);
+            else if (s.ab.genres.length < 2) genres = [...s.ab.genres, g];
+            else genres = s.ab.genres;
+            return { ab:{...s.ab, genres} };
+          }),
+          style: {
+            fontSize:'11px', padding:'5px 12px', borderRadius:'2px', cursor:'pointer', letterSpacing:'0.03em',
+            color: sel ? '#f3e1cc' : 'rgba(243,225,204,0.5)',
+            background: sel ? 'rgba(243,225,204,0.08)' : 'rgba(243,225,204,0.05)',
+            border: sel ? '1px solid rgba(243,225,204,0.25)' : '1px solid rgba(243,225,204,0.08)',
+          },
+        };
+      }),
+
+      abStatusChips: [
+        {key:'read', label:'Read'}, {key:'reading', label:'Reading'}, {key:'want', label:'Want to Read'},
+      ].map(s0 => ({
+        label: s0.label, onSelect: () => this.setState(s => ({ ab:{...s.ab, status:s0.key} })),
+        style: {
+          fontSize:'11px', fontWeight:'600', padding:'8px 16px', borderRadius:'3px', cursor:'pointer', letterSpacing:'0.04em', textTransform:'uppercase',
+          color: ab.status===s0.key ? '#0a0a0a' : 'rgba(243,225,204,0.5)',
+          background: ab.status===s0.key ? '#f3e1cc' : 'rgba(243,225,204,0.05)',
+          border: ab.status===s0.key ? '1px solid #f3e1cc' : '1px solid rgba(243,225,204,0.08)',
+        },
+      })),
+
+      abSaveBtnStyle: {
+        background: ab.title.trim() ? '#f3e1cc' : 'rgba(243,225,204,0.25)',
+        color: ab.title.trim() ? '#0a0a0a' : 'rgba(243,225,204,0.5)',
+        fontSize:'12px', fontWeight:'700', padding:'11px 26px', borderRadius:'3px',
+        cursor: ab.title.trim() ? 'pointer' : 'default',
+        letterSpacing:'0.07em', textTransform:'uppercase', userSelect:'none',
+      },
+      saveManualBook: () => {
+        if (!ab.title.trim()) return;
+        const pal = this.PALETTES[ab.paletteIdx];
+        const newBook = {
+          id: Date.now(), title: ab.title.trim(), author: ab.author.trim() || 'Unknown',
+          year: ab.year.trim() || '—', pages: 300, genres: ab.genres.length ? ab.genres : ['Fiction'],
+          coverBg: pal.bg, coverSpine: pal.spine, status: ab.status,
+          rating: null, dateRead: null, synopsis: ab.synopsis.trim() || null, myNote: null, friendTakes: [],
+        };
+        this.setState(s => ({
+          customBooks: [...s.customBooks, newBook],
+          screen: 'shelf', activeTab: ab.status,
+          ab: { mode:'search', query:'', title:'', author:'', year:'', synopsis:'', genres:[], status:'want', paletteIdx:0 },
+        }));
+      },
+
+      shelfBooks, sortOptions,
+      sortLabel: sortLabels[sortMode],
+      sortCaret: sortDropdownOpen ? '▲' : '▼',
+      sortDropdownOpen,
+      toggleSortDropdown: () => this.setState(s => ({ sortDropdownOpen: !s.sortDropdownOpen })),
+      readCount:   readB.length,
+      readingCount: readingB.length,
+      wantCount:   wantB.length,
+      tsRead:    this.ts(activeTab==='read'),
+      tsReading: this.ts(activeTab==='reading'),
+      tsWant:    this.ts(activeTab==='want'),
+      setTabRead:    () => this.setState({ activeTab:'read' }),
+      setTabReading: () => this.setState({ activeTab:'reading' }),
+      setTabWant:    () => this.setState({ activeTab:'want' }),
+      openRec: () => this.setState(s => ({ sendRec:{...s.sendRec, open:true} })),
+      openRecBook: () => this.setState(s => ({ sendRec:{...s.sendRec, open:true, bookId:activeBookId} })),
+
+      curBook, curBookStars,
+      goBack: () => this.setState({ screen:'shelf' }),
+
+      inboxItems,
+
+      showRec:  sendRec.open,
+      isS1: sendRec.step===1 && !sendRec.sent,
+      isS2: sendRec.step===2 && !sendRec.sent,
+      isS3: sendRec.step===3 && !sendRec.sent,
+      isSent: sendRec.sent,
+      srBooks, srFriends, srBook, srFriend, srSteps, srNextBtnStyle,
+      srNote: sendRec.note,
+      closeRec: () => this.setState({ sendRec:{open:false,step:1,bookId:null,friendId:null,note:'',sent:false} }),
+      srNext: () => this.setState(s => ({ sendRec:{...s.sendRec, step:Math.min(3,s.sendRec.step+1)} })),
+      srBack: () => this.setState(s => ({ sendRec:{...s.sendRec, step:Math.max(1,s.sendRec.step-1)} })),
+      setSrNote: (ev) => this.setState(s => ({ sendRec:{...s.sendRec, note:ev.target.value} })),
+      submitRec: () => this.setState(s => ({ sendRec:{...s.sendRec, sent:true} })),
+      noProp: (ev) => ev.stopPropagation(),
+
+      allFriends, curFriend, curFriendAvatarStyle, friendBooks,
+      openRecFriend: () => this.setState(s => ({ sendRec:{...s.sendRec, open:true, friendId:activeFriendId} })),
+
+      curReadingBook, readingProgress, progressPct: readingProgress+'%',
+      progressBarStyle, currentPage, readingNote,
+      setNote: (ev) => this.setState({ readingNote: ev.target.value }),
+      incProg: () => this.setState(s => ({ readingProgress: Math.min(100, s.readingProgress+5) })),
+      decProg: () => this.setState(s => ({ readingProgress: Math.max(0,  s.readingProgress-5) })),
+      trackRef: this.trackRef,
+      onTrackPointerDown: this.onTrackPointerDown,
+      thumbStyle: {
+        position:'absolute', left:`calc(${readingProgress}% - 8px)`, top:'50%', transform:'translateY(-50%)',
+        width:'16px', height:'16px', borderRadius:'50%', background:'#f3e1cc', border:'2px solid #0a0a0a',
+        boxShadow:'0 1px 3px rgba(243,225,204,0.35)', cursor:'grab',
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
