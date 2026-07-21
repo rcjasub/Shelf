@@ -7,8 +7,8 @@ import NavLabel from "../NavLabel";
 const NAV_ITEMS = [
   { to: "/shelf", label: "Shelf" },
   { to: "/reading", label: "Reading" },
-  { to: "/inbox", label: "Inbox" },
   { to: "/friends", label: "Friends" },
+  { to: "/inbox", label: "Inbox" },
 ];
 
 function initialsOf(name: string): string {

@@ -4,6 +4,8 @@ import { BOOKS } from "../data/mockBooks";
 import { useHeroParallax } from "../hooks/useHeroParallax";
 import AnimatedHeadline from "../components/AnimatedHeadline";
 import LoopingText from "../components/LoopingText";
+import GradualBlur from "../components/GradualBlur";
+import { Highlighter } from "../components/Highlighter";
 
 const BLOBS = [
   { bg: "#5BD98B", top: "5%", left: "0%" },
@@ -78,8 +80,19 @@ export default function Landing() {
 
       <div className="relative z-3 bg-shelf-bg px-13 pb-24 pt-20">
         <div className="mb-3.5 text-[11px] uppercase tracking-[0.25em] text-white/50">Trending this week</div>
-        <div className="mb-9 max-w-[520px] font-serif text-[34px] text-shelf-cream text-balance">
+        <div className="mb-4 max-w-[520px] font-serif text-[34px] text-shelf-cream text-balance">
           What everyone's adding to their shelf
+        </div>
+        <div className="mb-9 max-w-[520px] text-sm leading-relaxed text-white/60">
+          Pulled from what's moving on{" "}
+          <Highlighter action="highlight" color="#FBD509" padding={3} strokeWidth={1.5}>
+            <span className="text-shelf-ink">#BookTok</span>
+          </Highlighter>{" "}
+          and{" "}
+          <Highlighter action="underline" color="#E67BC7" strokeWidth={2}>
+            r/books
+          </Highlighter>{" "}
+          this week — not a black-box algorithm.
         </div>
         <div className="grid grid-cols-2 gap-5.5 sm:grid-cols-3 lg:grid-cols-6">
           {BOOKS.slice(0, 6).map((book) => (
@@ -96,6 +109,17 @@ export default function Landing() {
           ))}
         </div>
       </div>
+
+      <GradualBlur
+        target="page"
+        position="bottom"
+        height="7rem"
+        strength={2}
+        divCount={5}
+        curve="bezier"
+        exponential
+        opacity={1}
+      />
     </div>
   );
 }

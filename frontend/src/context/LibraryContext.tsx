@@ -8,10 +8,10 @@ import type { Friend } from "../types/friend";
 
 export interface RecModalState {
   open: boolean;
-  step: 1 | 2 | 3 | 4;
   bookId: number | null;
   friendId: number | null;
   note: string;
+  sent: boolean;
 }
 
 interface LibraryContextValue {
@@ -32,7 +32,6 @@ interface LibraryContextValue {
   rec: RecModalState;
   openRec: (bookId?: number) => void;
   closeRec: () => void;
-  setRecStep: (step: RecModalState["step"]) => void;
   selectRecBook: (bookId: number) => void;
   selectRecFriend: (friendId: number) => void;
   setRecNote: (note: string) => void;
@@ -43,10 +42,10 @@ const LibraryContext = createContext<LibraryContextValue | null>(null);
 
 const REC_MODAL_DEFAULT: RecModalState = {
   open: false,
-  step: 1,
   bookId: null,
   friendId: null,
   note: "",
+  sent: false,
 };
 
 export function LibraryProvider({ children }: { children: ReactNode }) {
@@ -116,14 +115,12 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     setInbox((prev) => prev.map((i) => (i.id === inboxId ? { ...i, status: "read" } : i)));
   };
 
-  const openRec = (bookId?: number) =>
-    setRec({ ...REC_MODAL_DEFAULT, open: true, step: bookId ? 2 : 1, bookId: bookId ?? null });
+  const openRec = (bookId?: number) => setRec({ ...REC_MODAL_DEFAULT, open: true, bookId: bookId ?? null });
   const closeRec = () => setRec(REC_MODAL_DEFAULT);
-  const setRecStep = (step: RecModalState["step"]) => setRec((prev) => ({ ...prev, step }));
-  const selectRecBook = (bookId: number) => setRec((prev) => ({ ...prev, bookId, step: 2 }));
-  const selectRecFriend = (friendId: number) => setRec((prev) => ({ ...prev, friendId, step: 3 }));
+  const selectRecBook = (bookId: number) => setRec((prev) => ({ ...prev, bookId }));
+  const selectRecFriend = (friendId: number) => setRec((prev) => ({ ...prev, friendId }));
   const setRecNote = (note: string) => setRec((prev) => ({ ...prev, note }));
-  const submitRec = () => setRec((prev) => ({ ...prev, step: 4 }));
+  const submitRec = () => setRec((prev) => ({ ...prev, sent: true }));
 
   const value = useMemo<LibraryContextValue>(
     () => ({
@@ -144,7 +141,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       rec,
       openRec,
       closeRec,
-      setRecStep,
       selectRecBook,
       selectRecFriend,
       setRecNote,

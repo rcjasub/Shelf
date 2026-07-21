@@ -4,7 +4,7 @@ import SendRecModal from "../SendRecModal";
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-shelf-bg font-sans text-shelf-cream">
+    <div className="min-h-screen font-sans text-shelf-cream">
       <Header />
       <main className="min-h-screen pt-14">
         <Outlet />
