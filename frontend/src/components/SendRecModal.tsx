@@ -1,5 +1,6 @@
 import { useLibrary } from "../context/LibraryContext";
 import BookCover from "./BookCover";
+import ShinyText from "./ShinyText";
 
 export default function SendRecModal() {
   const { rec, books, friends, closeRec, selectRecBook, selectRecFriend, setRecNote, submitRec, getBook, getFriend } =
@@ -21,7 +22,20 @@ export default function SendRecModal() {
       >
         <div className="flex items-start justify-between border-b border-shelf-cream/7 px-7 py-6">
           <div>
-            <div className="mb-2.5 font-serif text-2xl text-shelf-cream">Send a Rec</div>
+            <div className="mb-2.5 font-serif text-2xl">
+              <ShinyText
+                text="Send a Rec"
+                speed={2}
+                delay={0}
+                color="#f3e1cc"
+                shineColor="#ffffff"
+                spread={120}
+                direction="left"
+                yoyo={false}
+                pauseOnHover={false}
+                disabled={false}
+              />
+            </div>
             <div className="flex items-center gap-1.5">
               {[1, 2, 3].map((n) => (
                 <span key={n} className="flex items-center gap-1.5">

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLibrary } from "../context/LibraryContext";
 import BookCard from "../components/BookCard";
+import ShinyText from "../components/ShinyText";
 import type { BookStatus } from "../types/book";
 
 const TABS: { key: BookStatus; label: string }[] = [
@@ -71,9 +72,20 @@ export default function Shelf() {
           </div>
           <button
             onClick={() => openRec()}
-            className="flex-shrink-0 rounded-[3px] bg-shelf-cream px-5.5 py-2.5 text-xs font-bold uppercase tracking-wide text-shelf-bg transition-transform hover:-translate-y-0.5"
+            className="flex-shrink-0 rounded-[3px] bg-shelf-cream px-5.5 py-2.5 text-xs font-bold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
           >
-            Send a Rec →
+            <ShinyText
+              text="Send a Rec →"
+              speed={2}
+              delay={0}
+              color="#0a0a0a"
+              shineColor="#ffffff"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+              disabled={false}
+            />
           </button>
         </div>
       </div>
@@ -121,7 +133,7 @@ export default function Shelf() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6.5 p-9 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4.5 p-9 sm:grid-cols-3 lg:grid-cols-7">
         {visibleBooks.map((book) => (
           <BookCard key={book.id} book={book} />
         ))}
