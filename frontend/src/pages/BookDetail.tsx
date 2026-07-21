@@ -1,9 +1,10 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useLibrary } from "../context/LibraryContext";
 import StarRating from "../components/StarRating";
 
 export default function BookDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { getBook, setBookRating, setBookStatus, openRec } = useLibrary();
   const book = getBook(Number(id));
 
@@ -45,7 +46,10 @@ export default function BookDetail() {
               </button>
             ) : (
               <button
-                onClick={() => setBookStatus(book.id, "reading")}
+                onClick={() => {
+                  setBookStatus(book.id, "reading");
+                  navigate(`/reading/${book.id}`);
+                }}
                 className="rounded-[3px] border border-shelf-cream/10 py-2.5 text-[11px] font-medium text-shelf-cream/55"
               >
                 Start Reading

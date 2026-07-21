@@ -27,6 +27,7 @@ export default function App() {
               <Route path="/friends" element={<Friends />} />
               <Route path="/friends/:friendId" element={<Friends />} />
               <Route path="/add-book" element={<AddBook />} />
+              <Route path="/reading" element={<CurrentlyReading />} />
               <Route path="/reading/:id" element={<CurrentlyReading />} />
             </Route>
           </Route>

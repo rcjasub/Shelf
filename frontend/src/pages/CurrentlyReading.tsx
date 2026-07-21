@@ -1,15 +1,30 @@
 import { useRef, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useLibrary } from "../context/LibraryContext";
 
 export default function CurrentlyReading() {
   const { id } = useParams();
-  const { getBook, setReadingNote } = useLibrary();
-  const book = getBook(Number(id));
+  const { books, getBook, setReadingNote } = useLibrary();
+  const book = id ? getBook(Number(id)) : books.find((b) => b.status === "reading");
   const [progress, setProgress] = useState(60);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  if (!book) return <Navigate to="/shelf" replace />;
+  if (!book) {
+    return (
+      <div className="animate-fade-in flex min-h-[calc(100vh-56px)] flex-col items-center justify-center gap-3 px-13 text-center">
+        <div className="font-serif text-3xl text-shelf-cream">Nothing in progress</div>
+        <div className="max-w-sm text-sm text-white/55">
+          Mark a book as "Reading" from your shelf to track your progress here.
+        </div>
+        <Link
+          to="/shelf"
+          className="mt-2 rounded-[3px] bg-shelf-cream px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-shelf-bg"
+        >
+          Go to Shelf
+        </Link>
+      </div>
+    );
+  }
 
   const updateFromEvent = (clientX: number) => {
     const track = trackRef.current;

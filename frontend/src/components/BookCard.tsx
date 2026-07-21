@@ -3,8 +3,10 @@ import type { Book } from "../types/book";
 import BookCover from "./BookCover";
 
 export default function BookCard({ book }: { book: Book }) {
+  const to = book.status === "reading" ? `/reading/${book.id}` : `/books/${book.id}`;
+
   return (
-    <Link to={`/books/${book.id}`} className="group block transition-transform duration-200 hover:-translate-y-1">
+    <Link to={to} className="group block transition-transform duration-200 hover:-translate-y-1">
       <BookCover title={book.title} bg={book.coverBg} spine={book.coverSpine} />
       <div className="mt-2.5">
         <div className="text-xs text-white/55">{book.author}</div>

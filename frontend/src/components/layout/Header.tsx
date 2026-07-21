@@ -6,6 +6,7 @@ import NavLabel from "../NavLabel";
 
 const NAV_ITEMS = [
   { to: "/shelf", label: "Shelf" },
+  { to: "/reading", label: "Reading" },
   { to: "/inbox", label: "Inbox" },
   { to: "/friends", label: "Friends" },
 ];
@@ -29,7 +30,7 @@ export default function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-100 flex h-14 items-stretch border-b border-shelf-cream/8 bg-[#0d0f0c] px-12">
       <div className="mr-12 flex flex-shrink-0 items-center">
-        <AnimatedLogo onClick={() => navigate(isAuthenticated ? "/shelf" : "/")} className="cursor-pointer" />
+        <AnimatedLogo onClick={() => navigate("/")} className="cursor-pointer" />
       </div>
 
       {isAuthenticated && (
