@@ -16,12 +16,19 @@ const SORT_OPTIONS = [
   { key: "rating", label: "Rating" },
 ];
 
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+}
+
 export default function Shelf() {
   const { user } = useAuth();
   const { books, openRec } = useLibrary();
   const [tab, setTab] = useState<BookStatus>("read");
   const [sortMode, setSortMode] = useState<(typeof SORT_OPTIONS)[number]["key"]>("added");
   const [sortOpen, setSortOpen] = useState(false);
+
+  if (!user) return null;
 
   const readCount = books.filter((b) => b.status === "read").length;
   const wantCount = books.filter((b) => b.status === "want").length;
@@ -38,12 +45,16 @@ export default function Shelf() {
     <div className="animate-fade-in">
       <div className="relative overflow-hidden px-13 pt-13">
         <div className="relative z-10 flex items-end gap-6.5 pb-8.5">
-          <div className="flex h-18 w-18 flex-shrink-0 items-center justify-center rounded-full border-2 border-shelf-cream/22 bg-gradient-to-br from-[#2b2b2b] to-[#0c0c0c] text-2xl font-bold text-[#f7f3ea]">
-            {user.initials}
+          <div className="flex h-18 w-18 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-shelf-cream/22 bg-gradient-to-br from-[#2b2b2b] to-[#0c0c0c] text-2xl font-bold text-[#f7f3ea]">
+            {user.pictureUrl ? (
+              <img src={user.pictureUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+            ) : (
+              initialsOf(user.name)
+            )}
           </div>
           <div className="flex-1">
             <div className="mb-1 font-serif text-4xl leading-none text-shelf-cream">{user.name}</div>
-            <div className="mb-3.5 text-[13px] text-shelf-accent">{user.handle}</div>
+            <div className="mb-3.5 text-[13px] text-shelf-accent">{user.email}</div>
             <div className="flex gap-7">
               <div className="text-[13px]">
                 <span className="font-bold text-shelf-cream">{readCount}</span>{" "}

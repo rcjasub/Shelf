@@ -2,19 +2,26 @@ package com.shelf.backend.model;
 
 public class User {
 
-    private Long id;
+    private String id;
     private String name;
-    private String handle;
     private String email;
+    private String pictureUrl;
 
     public User() {
     }
 
-    public Long getId() {
+    public User(String id, String name, String email, String pictureUrl) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.pictureUrl = pictureUrl;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -26,19 +33,19 @@ public class User {
         this.name = name;
     }
 
-    public String getHandle() {
-        return handle;
-    }
-
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 }

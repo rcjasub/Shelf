@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Local secrets (GOOGLE_CLIENT_ID, JWT_SECRET) - these are passed as real env vars
+# today, but ignore any local file forms too in case that changes.
+.env
+.env.local
+application-local.properties
+application-local.yml
+
 ### STS ###
 .apt_generated
 .classpath

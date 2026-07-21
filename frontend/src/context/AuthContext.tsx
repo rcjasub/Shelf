@@ -1,32 +1,44 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CurrentUser } from "../types/user";
+import * as authApi from "../lib/api";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
-  user: CurrentUser;
-  login: () => void;
-  logout: () => void;
+  isLoading: boolean;
+  user: CurrentUser | null;
+  loginWithGoogle: (credential: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
-
-const DEFAULT_USER: CurrentUser = {
-  name: "Maren Cole",
-  handle: "@marencole",
-  initials: "MC",
-};
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    authApi
+      .getCurrentUser()
+      .then(setUser)
+      .catch(() => setUser(null))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      isAuthenticated,
-      user: DEFAULT_USER,
-      login: () => setIsAuthenticated(true),
-      logout: () => setIsAuthenticated(false),
+      isAuthenticated: user !== null,
+      isLoading,
+      user,
+      loginWithGoogle: async (credential: string) => {
+        const loggedInUser = await authApi.loginWithGoogle(credential);
+        setUser(loggedInUser);
+      },
+      logout: async () => {
+        await authApi.logout();
+        setUser(null);
+      },
     }),
-    [isAuthenticated],
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
