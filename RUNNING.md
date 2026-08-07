@@ -35,10 +35,11 @@ Two terminals, both services must be up — the frontend proxies `/api/*` to the
 cd backend
 ./mvnw spring-boot:run
 ```
-To use `application-local.properties`, activate the `local` profile:
+This boots fine and `/api/health` responds, but Google sign-in won't work — `google.client-id`/`app.jwt-secret` are blank unless you activate the `local` profile (which has them filled in) or set `GOOGLE_CLIENT_ID`/`JWT_SECRET` env vars:
 ```
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+./mvnw "spring-boot:run" "-Dspring-boot.run.profiles=local"
 ```
+> **PowerShell gotcha:** quote each argument as shown above. `mvnw.cmd` is a batch script under the hood, and cmd.exe splits unquoted arguments on `=` (not just spaces) — `-Dspring-boot.run.profiles=local` unquoted gets torn into `-Dspring-boot.run.profiles` and `local`, and Maven then tries to run `local` as a lifecycle phase and fails. Quoting keeps it as one token. (Also: `spring-boot:run` — no space around the colon, or Maven sees an empty goal.)
 
 **Frontend** (port 5173):
 ```
