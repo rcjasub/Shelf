@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLibrary } from "../context/LibraryContext";
 import { GENRE_OPTIONS, PALETTES } from "../data/mockBooks";
 import type { BookStatus } from "../types/book";
+import { PointerHighlight } from "../components/ui/pointer-highlight";
 
 const STATUS_OPTIONS: { key: BookStatus; label: string }[] = [
   { key: "want", label: "Want to Read" },
@@ -66,7 +67,16 @@ export default function AddBook() {
   return (
     <div className="min-h-[calc(100vh-56px)] px-13 py-11">
       <div className="max-w-3xl">
-        <div className="mb-1.5 font-serif text-4xl text-shelf-cream">Add a Book</div>
+        <div className="mb-9 flex flex-wrap items-center gap-2 font-serif text-4xl text-shelf-cream">
+          <span>Add a</span>
+          <PointerHighlight
+            containerClassName="inline-flex items-center"
+            rectangleClassName="border-shelf-accent/60"
+            pointerClassName="text-shelf-accent"
+          >
+            <span>Book</span>
+          </PointerHighlight>
+        </div>
         <div className="mb-7 text-sm text-white/55">
           Search the catalog, or enter one yourself and design its cover.
         </div>

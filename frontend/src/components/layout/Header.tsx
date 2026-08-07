@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useLibrary } from "../../context/LibraryContext";
@@ -21,8 +22,22 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { inbox } = useLibrary();
   const unreadCount = inbox.filter((i) => i.status === "unread").length;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [menuOpen]);
 
   const handleLogout = async () => {
+    setMenuOpen(false);
     await logout();
     navigate("/");
   };
@@ -69,17 +84,33 @@ export default function Header() {
               <div className="text-xs font-semibold leading-tight text-[#f7f3ea]">{user.name}</div>
               <div className="text-[10px] text-shelf-cream/45">{user.email}</div>
             </div>
-            <button
-              onClick={handleLogout}
-              title="Sign out"
-              className="flex h-8.5 w-8.5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#2b2b2b] to-[#0c0c0c] text-[11px] font-bold text-[#f7f3ea]"
-            >
-              {user.pictureUrl ? (
-                <img src={user.pictureUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
-              ) : (
-                initialsOf(user.name)
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                title={user.name}
+                className="flex h-8.5 w-8.5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#2b2b2b] to-[#0c0c0c] text-[11px] font-bold text-[#f7f3ea]"
+              >
+                {user.pictureUrl ? (
+                  <img src={user.pictureUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  initialsOf(user.name)
+                )}
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-[calc(100%+10px)] w-48 overflow-hidden rounded-md border border-shelf-cream/10 bg-[#15170f] shadow-lg">
+                  <div className="border-b border-shelf-cream/8 px-3.5 py-3">
+                    <div className="text-xs font-semibold leading-tight text-[#f7f3ea]">{user.name}</div>
+                    <div className="mt-0.5 text-[10px] text-shelf-cream/45">{user.email}</div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-3.5 py-2.5 text-left text-[12px] font-medium text-shelf-cream/70 hover:bg-shelf-cream/5 hover:text-shelf-cream"
+                  >
+                    Sign out
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
           </>
         ) : (
           <NavLink
