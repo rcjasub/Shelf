@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
 import BookCover from "./BookCover";
+import CoverImageLayer from "./CoverImageLayer";
 import ShinyText from "./ShinyText";
 import Stepper, { Step } from "./Stepper";
 
@@ -110,7 +111,10 @@ export default function SendRecModal() {
                         : "border-shelf-cream/8 hover:border-shelf-cream/20"
                     }`}
                   >
-                    <div className="h-12 w-9 flex-shrink-0 rounded-sm" style={{ background: book.coverBg }} />
+                    <div className="relative h-12 w-9 flex-shrink-0 overflow-hidden rounded-sm">
+                      <div className="absolute inset-0" style={{ background: book.coverBg }} />
+                      <CoverImageLayer title={book.title} author={book.author} />
+                    </div>
                     <div className="min-w-0">
                       <div className="truncate font-serif text-sm text-shelf-cream">{book.title}</div>
                       <div className="mt-0.5 text-[11px] text-white/55">{book.author}</div>
@@ -154,7 +158,12 @@ export default function SendRecModal() {
               <div className="mb-4 text-[11px] uppercase tracking-widest text-white/55">3 — Write your note</div>
               {selectedBook && (
                 <div className="mb-5 flex items-center gap-3.5 rounded-md bg-[#f0ebe0] p-3.5">
-                  <BookCover title="" bg={selectedBook.coverBg} spine={selectedBook.coverSpine} />
+                  <BookCover
+                    title=""
+                    coverTitle={selectedBook.title}
+                    author={selectedBook.author}
+                    bg={selectedBook.coverBg}
+                  />
                   <div>
                     <div className="font-serif text-[17px] leading-tight text-shelf-ink">{selectedBook.title}</div>
                     {selectedFriend && (

@@ -1,6 +1,7 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useLibrary } from "../context/LibraryContext";
 import StarRating from "../components/StarRating";
+import CoverImageLayer from "../components/CoverImageLayer";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ export default function BookDetail() {
         <div className="w-55 flex-shrink-0">
           <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-shelf-cream/9">
             <div className="absolute inset-0" style={{ background: book.coverBg }} />
-            <div className="absolute inset-y-0 left-0 w-2" style={{ background: book.coverSpine }} />
+            <CoverImageLayer title={book.title} author={book.author} />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/94 to-transparent p-4">
               <div className="font-serif text-[15px] leading-tight text-shelf-cream">{book.title}</div>
             </div>

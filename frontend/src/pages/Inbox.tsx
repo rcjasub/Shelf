@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
 import DarkVeil from "../components/DarkVeil";
+import CoverImageLayer from "../components/CoverImageLayer";
 
 export default function Inbox() {
   const { inbox, friends, addToShelfFromInbox, dismissFromInbox, markInboxRead } = useLibrary();
@@ -59,7 +60,10 @@ export default function Inbox() {
                       )}
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="h-9.5 w-7 flex-shrink-0 rounded-sm" style={{ background: item.coverBg }} />
+                      <div className="relative h-9.5 w-7 flex-shrink-0 overflow-hidden rounded-sm">
+                        <div className="absolute inset-0" style={{ background: item.coverBg }} />
+                        <CoverImageLayer title={item.bookTitle} author={item.bookAuthor} />
+                      </div>
                       <div>
                         <div className="font-serif text-[17px] leading-tight text-shelf-cream">{item.bookTitle}</div>
                         <div className="mt-0.5 text-[11px] text-white/55">

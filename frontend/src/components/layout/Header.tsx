@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useLibrary } from "../../context/LibraryContext";
 import AnimatedLogo from "../AnimatedLogo";
 import NavLabel from "../NavLabel";
+import { DrawUnderline } from "../ui/draw-random-underline";
 
 const NAV_ITEMS = [
   { to: "/shelf", label: "Shelf" },
@@ -54,17 +55,17 @@ export default function Header() {
             <NavLink
               key={item.to}
               to={item.to}
-              className="flex items-center gap-1.5 px-4 text-[13px] font-medium uppercase tracking-wide text-shelf-cream/55 hover:text-shelf-cream"
+              className="flex items-stretch text-[13px] font-medium uppercase tracking-wide text-shelf-cream/55 hover:text-shelf-cream"
             >
               {({ isActive }) => (
-                <>
+                <DrawUnderline className="flex items-center gap-1.5 px-4">
                   <NavLabel label={item.label} active={isActive} />
                   {item.to === "/inbox" && unreadCount > 0 && (
                     <span className="rounded-full bg-shelf-accent px-1.5 py-px text-[9px] font-bold leading-tight text-shelf-bg">
                       {unreadCount}
                     </span>
                   )}
-                </>
+                </DrawUnderline>
               )}
             </NavLink>
           ))}

@@ -6,6 +6,7 @@ import AnimatedHeadline from "../components/AnimatedHeadline";
 import LoopingText from "../components/LoopingText";
 import GradualBlur from "../components/GradualBlur";
 import { Highlighter } from "../components/Highlighter";
+import CoverImageLayer from "../components/CoverImageLayer";
 
 const BLOBS = [
   { bg: "#5BD98B", top: "5%", left: "0%" },
@@ -99,7 +100,7 @@ export default function Landing() {
             <div key={book.id} onClick={enterShelf} className="cursor-pointer">
               <div className="relative aspect-[2/3] overflow-hidden rounded-[3px] border border-shelf-cream/10">
                 <div className="absolute inset-0" style={{ background: book.coverBg }} />
-                <div className="absolute inset-y-0 left-0 w-[5px]" style={{ background: book.coverSpine }} />
+                <CoverImageLayer title={book.title} author={book.author} />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-2.5">
                   <div className="font-serif text-xs leading-tight text-shelf-cream">{book.title}</div>
                 </div>

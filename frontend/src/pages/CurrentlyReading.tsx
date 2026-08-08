@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLibrary } from "../context/LibraryContext";
+import CoverImageLayer from "../components/CoverImageLayer";
 
 export default function CurrentlyReading() {
   const { id } = useParams();
@@ -42,7 +43,7 @@ export default function CurrentlyReading() {
       <div className="grid max-w-4xl grid-cols-1 items-start gap-14 md:grid-cols-[260px_1fr]">
         <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-shelf-cream/9">
           <div className="absolute inset-0" style={{ background: book.coverBg }} />
-          <div className="absolute inset-y-0 left-0 w-2" style={{ background: book.coverSpine }} />
+          <CoverImageLayer title={book.title} author={book.author} />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/93 to-transparent p-5">
             <div className="font-serif text-lg leading-tight text-shelf-cream">{book.title}</div>
           </div>

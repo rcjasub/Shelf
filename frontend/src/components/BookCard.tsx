@@ -7,7 +7,7 @@ export default function BookCard({ book }: { book: Book }) {
 
   return (
     <Link to={to} className="group block transition-transform duration-200 hover:-translate-y-1">
-      <BookCover title={book.title} bg={book.coverBg} spine={book.coverSpine} />
+      <BookCover title={book.title} author={book.author} bg={book.coverBg} />
       <div className="mt-2.5">
         <div className="text-xs text-white/55">{book.author}</div>
         {book.rating && (

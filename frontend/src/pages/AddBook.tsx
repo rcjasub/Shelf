@@ -4,6 +4,7 @@ import { useLibrary } from "../context/LibraryContext";
 import { GENRE_OPTIONS, PALETTES } from "../data/mockBooks";
 import type { BookStatus } from "../types/book";
 import { PointerHighlight } from "../components/ui/pointer-highlight";
+import CoverImageLayer from "../components/CoverImageLayer";
 
 const STATUS_OPTIONS: { key: BookStatus; label: string }[] = [
   { key: "want", label: "Want to Read" },
@@ -109,7 +110,10 @@ export default function AddBook() {
                   key={book.id}
                   className="flex items-center gap-4 rounded-md border border-shelf-cream/8 bg-shelf-panel px-4.5 py-3.5"
                 >
-                  <div className="h-14 w-10 flex-shrink-0 rounded-sm" style={{ background: book.coverBg }} />
+                  <div className="relative h-14 w-10 flex-shrink-0 overflow-hidden rounded-sm">
+                    <div className="absolute inset-0" style={{ background: book.coverBg }} />
+                    <CoverImageLayer title={book.title} author={book.author} />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-serif text-base leading-tight text-shelf-cream">{book.title}</div>
                     <div className="mt-0.5 text-xs text-white/55">
