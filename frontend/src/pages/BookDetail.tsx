@@ -6,7 +6,7 @@ import CoverImageLayer from "../components/CoverImageLayer";
 export default function BookDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getBook, setBookRating, setBookStatus, openRec } = useLibrary();
+  const { getBook, setBookRating, setBookStatus, setReadingNote, openRec } = useLibrary();
   const book = getBook(Number(id));
 
   if (!book) return <Navigate to="/shelf" replace />;
@@ -38,14 +38,7 @@ export default function BookDetail() {
             >
               Send to a Friend →
             </button>
-            {book.status !== "want" ? (
-              <button
-                onClick={() => setBookStatus(book.id, "want")}
-                className="rounded-[3px] border border-shelf-cream/10 py-2.5 text-[11px] font-medium text-shelf-cream/55"
-              >
-                Mark as Want to Read
-              </button>
-            ) : (
+            {book.status === "want" && (
               <button
                 onClick={() => {
                   setBookStatus(book.id, "reading");
@@ -78,12 +71,18 @@ export default function BookDetail() {
 
         <p className="mb-7.5 text-[15px] leading-loose text-shelf-cream/70 text-balance">{book.synopsis}</p>
 
-        {book.myNote && (
-          <div className="mb-6.5 rounded-md border border-shelf-cream/8 bg-shelf-panel p-5.5">
-            <div className="mb-3 text-[9px] uppercase tracking-[2.5px] text-white/55">My Notes</div>
-            <div className="font-serif text-sm italic leading-loose text-shelf-cream">{book.myNote}</div>
+        <div className="mb-6.5">
+          <div className="mb-3 flex items-baseline justify-between">
+            <div className="text-[9px] uppercase tracking-[2.5px] text-white/55">Your Note</div>
+            <div className="text-[10px] text-shelf-cream/35">Visible to friends</div>
           </div>
-        )}
+          <textarea
+            value={book.myNote ?? ""}
+            onChange={(e) => setReadingNote(book.id, e.target.value)}
+            placeholder="Leave a note or comment for friends to see…"
+            className="block min-h-[110px] w-full resize-y rounded-md border border-shelf-cream/9 bg-shelf-panel p-4 font-sans text-sm leading-relaxed text-shelf-cream outline-none"
+          />
+        </div>
 
         {book.friendTakes.length > 0 && (
           <div>

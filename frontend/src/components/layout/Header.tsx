@@ -58,7 +58,7 @@ export default function Header() {
               className="flex items-stretch text-[13px] font-medium uppercase tracking-wide text-shelf-cream/55 hover:text-shelf-cream"
             >
               {({ isActive }) => (
-                <DrawUnderline className="flex items-center gap-1.5 px-4">
+                <DrawUnderline className="flex items-center gap-1.5 px-4" strokeColor="#ff4fa3">
                   <NavLabel label={item.label} active={isActive} />
                   {item.to === "/inbox" && unreadCount > 0 && (
                     <span className="rounded-full bg-shelf-accent px-1.5 py-px text-[9px] font-bold leading-tight text-shelf-bg">

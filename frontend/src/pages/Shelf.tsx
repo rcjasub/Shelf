@@ -133,7 +133,7 @@ export default function Shelf() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4.5 p-9 sm:grid-cols-3 lg:grid-cols-7">
+      <div className="grid grid-cols-3 gap-4 p-9 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9">
         {visibleBooks.map((book) => (
           <BookCard key={book.id} book={book} />
         ))}
